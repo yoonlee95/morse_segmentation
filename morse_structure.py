@@ -27,7 +27,6 @@ def getsegmentation(data):
 
 
 
-
         #Remove duplicates
         if cur_node.get_word() != "":
             # print cur_node.get_word()
@@ -77,13 +76,8 @@ def getsegmentation(data):
 
                 if pos < 4:
                     break
-                # prev_node = traverse_node
-                # traverse_node = traverse_node.get_prev_pos()
 
 
-            # print "------------"
-            # print cur_word
-            # print pos
 
             cur_word = traverse_node.get_word()
             pos = traverse_node.get_position()
@@ -110,10 +104,6 @@ def getsegmentation(data):
             for node in cur_node.get_next_alphabets():
                 neighbor_nodes.put((node, pos, 1))
 
-        # if word == 'them':
-        #     print word, hihi, data[hihi]
-        # if word == 'they':
-        #     print word, hihi, data[hihi]
         cur_node.set_word(word)
         ###############################################
         #Get all the word objects created by the graph#

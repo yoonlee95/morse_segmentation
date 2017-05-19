@@ -19,12 +19,12 @@ VOCAB_DATA = 'googlenews_vocab.pkl'
 WORD_REPR = 'fasttext'
 WORD_REPR_DATA = 'wiki.en.bin'
 
-SAVE_PICKLE = True
+SAVE_PICKLE = False
 MODE = "PREFIX"                #select between PREFIX and SUFFIX
 DICT = 'pkloutput1m/'
 
 #make directory if it doesnt exist
-if not os.path.exists(DICT):
+if not os.path.exists(DICT) and SAVE_PICKLE == True:
     os.makedirs(DICT)
 
 print "initialize data"
@@ -37,7 +37,7 @@ w_sem = {}
 loc_sem = {}
 ss_sem = {}
 
-BATCH_SIZE = 1000000
+BATCH_SIZE = 100000
 BATCH = FULL_DATA[:BATCH_SIZE]
 print "initalizing word-vec dataset"
 
