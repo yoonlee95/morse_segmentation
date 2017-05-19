@@ -10,8 +10,15 @@ def getsegmentation(data):
     ROOT = ALPHABETTREE(None, '', 0)
     neighbor_nodes = Queue()
 
+    counter = 0
+    progress = len(data)/10
     #for all words in the pickle data
     for word in data:
+        counter += 1
+        if counter % progress == 0:
+            print("BUILT "+str(counter/progress*10)+ " % of DATA")
+
+
 
 
         cur_node = ROOT

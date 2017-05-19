@@ -174,8 +174,8 @@ def getsegmentation(data):
 
 
     print "Created graph."
-    for key,value in word_segmentation.iteritems():
-        print key ,value
+    # for key,value in word_segmentation.iteritems():
+    #     print key ,value
     #     # count += len(value)
 
     return word_segmentation
