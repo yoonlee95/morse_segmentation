@@ -5,14 +5,13 @@ from wordGroup import WORDGROUP
 import time
 
 def getsegmentation(data):
-    # data = ['aaaabbb', 'aaaaaaa']
     word_segmentation = {}
 
     ROOT = ALPHABETTREE(None, '', 0)
     neighbor_nodes = Queue()
 
     #for all words in the pickle data
-    for  word in data:
+    for word in data:
 
 
         cur_node = ROOT

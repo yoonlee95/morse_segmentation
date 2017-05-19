@@ -5,7 +5,6 @@ from wordGroup import WORDGROUP
 import time
 
 def getsegmentation(data):
-    # data = ['aaaabbb', 'aaaaaaa']
     word_segmentation = {}
 
     ROOT = ALPHABETTREE(None, '', 0)
@@ -14,8 +13,6 @@ def getsegmentation(data):
     #for all words in the pickle data
     for word in data:
 
-        # print "------"
-        # print word
 
         cur_node = ROOT
         #####################################################
@@ -29,9 +26,6 @@ def getsegmentation(data):
             cur_node = cur_node.traverse_alphabet(letter)
 
 
-        #create worgroup for the current word
-        # cur_word_group = WORDGROUP(word)
-
 
         #Remove duplicates
         if cur_node.get_word() != "":
@@ -44,12 +38,9 @@ def getsegmentation(data):
         #######################################################
 
 
-        # print word
 
         prev_node = cur_node
         traverse_node = prev_node
-        # print word
-        # print traverse_node.get_position()
         pos = traverse_node.get_position()
         # print pos
         if pos < 3:
@@ -75,17 +66,9 @@ def getsegmentation(data):
                         neighbor_nodes.put((node, pos, i+2))
                     else:
                         cur_word = node.get_word()
-                        # print cur_word
-                        # print "------------"
-                        # print cur_word
-                        # print pos
 
                         #check if the cur_word is not empty
                         if cur_word:
-                            # print pos
-                            # print word
-                            # print cur_word
-                            # print cur_word[pos:]
                             r_word = word[pos+1:]
                             r_word = r_word[::-1]
                             segmentation = ("", r_word)
@@ -95,13 +78,8 @@ def getsegmentation(data):
 
                 if pos < 4:
                     break
-                # prev_node = traverse_node
-                # traverse_node = traverse_node.get_prev_pos()
 
 
-            # print "------------"
-            # print cur_word
-            # print pos
 
             cur_word = traverse_node.get_word()
             pos = traverse_node.get_position()
@@ -158,17 +136,11 @@ def getsegmentation(data):
                 if cur_word_len > word_len:
                     segmentation = (d_2, d_1)
 
-                    # if segmentation == (u'', u'n'):
-                    #     print d_1
-                    #     print d_2
                     if not word_segmentation.has_key(segmentation):
                         word_segmentation[segmentation] = []
 
                     word_segmentation[segmentation].append((word[::-1], cur_word[::-1]))
                 elif word_len > cur_word_len:
-                    # if segmentation == (u'', u'n'):
-                    #     print d_1
-                    #     print d_2
  
                     segmentation = (d_1, d_2)
                     if not word_segmentation.has_key(segmentation):
@@ -190,9 +162,6 @@ def getsegmentation(data):
                         word_segmentation[segmentation].append((word[::-1], cur_word[::-1]))
 
 
-                # print cur_group.get_list()
-
-                # cur_word_group.add_word(cur_group.get_word())
 
             #add next level if should
             if level < 6:
@@ -205,41 +174,11 @@ def getsegmentation(data):
 
 
     print "Created graph."
-    # count = 0
-    # return word_segmentation
     # for key,value in word_segmentation.iteritems():
     #     print key ,value
     #     # count += len(value)
-    # print count
 
     return word_segmentation
-
-    # nodes = Queue()
-
-    # nodes.put(ROOT)
-    
-
-    # # for i in range(6+steps):
-    # while nodes.empty() == False:
-
-    #     node = nodes.get()
-
-    #     # add the words to the proper data structures
-    #     cur_group = node.get_word_group()
-
-    #     if cur_group is not None:
-    #         print cur_group.get_word().encode('ascii', 'ignore')   , cur_group.get_list()
-
-    #     nextnodes = node.get_next_alphabets()
-
-    #     for nextnode in nextnodes:
-    #         nodes.put(nextnode)
-    # print "segmentation done"
-
-
-
-
-    
 
 if __name__ == "__main__":
     import timeit

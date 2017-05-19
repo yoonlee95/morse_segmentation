@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
+import os
 import morse_structure
+import morse_structure_reverse
 import numpy as np
 from calc_distance2 import get_distance_parallel
 from vectorize_word import vectorize_word
@@ -18,18 +20,16 @@ WORD_REPR = 'fasttext'
 WORD_REPR_DATA = 'wiki.en.bin'
 
 SAVE_PICKLE = True
+MODE = "PREFIX"                #select between PREFIX and SUFFIX
 DICT = 'pkloutput1m/'
 
-print "initialize data"
+#make directory if it doesnt exist
+if not os.path.exists(DICT):
+    os.makedirs(DIC)
 
+print "initialize data"
 with open(VOCAB_DATA, 'rb') as f:
     FULL_DATA = pickle.load(f)
-BATCH = FULL_DATA[:1000000]
-print "initalizing word-vec dataset"
-
-WORD_REP = vectorize_word(WORD_REPR, WORD_REPR_DATA)
-
-SEGMENTED_WORD = morse_structure.getsegmentation(BATCH)
 
 r_orth = {}
 r_sem = {}
@@ -37,6 +37,23 @@ w_sem = {}
 loc_sem = {}
 ss_sem = {}
 
+BATCH_SIZE = 1000000
+BATCH = FULL_DATA[:BATCH_SIZE]
+print "initalizing word-vec dataset"
+
+WORD_REP = vectorize_word(WORD_REPR, WORD_REPR_DATA)
+
+#CREATE SUPPORT SET
+if MODE == "SUFFIX":
+    SEGMENTED_WORD = morse_structure.getsegmentation(BATCH)
+else:
+    for index in range(BATCH_SIZE):
+        if len(BATCH[index]) > 0:
+            BATCH[index] = BATCH[index][::-1]
+    SEGMENTED_WORD = morse_structure_reverse.getsegmentation(BATCH)
+
+
+#CALCULATE THE SCORES(LOCAL ,GLOBAL) FOR THE SUPPORT SETS
 for rule, words in SEGMENTED_WORD.iteritems():
     w_1 = []
     w_2 = []
@@ -52,7 +69,6 @@ for rule, words in SEGMENTED_WORD.iteritems():
 
         total = len_w * len_w
         total_count = np.sum(count)
-        # print rule, words
         # print "RULE: " + str(rule)+ " Score: " + str(total_count) + "/" + str(total)
 
 
