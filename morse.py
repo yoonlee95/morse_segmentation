@@ -25,7 +25,7 @@ DICT = 'pkloutput1m/'
 
 #make directory if it doesnt exist
 if not os.path.exists(DICT):
-    os.makedirs(DIC)
+    os.makedirs(DICT)
 
 print "initialize data"
 with open(VOCAB_DATA, 'rb') as f:
