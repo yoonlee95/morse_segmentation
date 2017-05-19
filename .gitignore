@@ -99,3 +99,13 @@ ENV/
 
 # mypy
 .mypy_cache/
+
+
+
+#exra
+*.txt
+*.tar.gz
+pkloutput100k_wrong/
+textoutput/
+*.bin
+*.pkl
