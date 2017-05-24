@@ -1,12 +1,14 @@
 #!/usr/bin/env python
 
 import os
-import morse_structure
-import morse_structure_reverse
 import numpy as np
+import pickle
+import json
+
 from calc_distance2 import get_distance_parallel
 from vectorize_word import vectorize_word
-import pickle
+import morse_structure
+import morse_structure_reverse
 
 __author__ = "Jong Yoon(John) Lee"
 __license__ = "MIT"
@@ -16,21 +18,46 @@ __email__ = "jlee642@illinois.edu"
 
 VOCAB_DATA = 'googlenews_vocab.pkl'
 
-WORD_REPR = 'fasttext'
-WORD_REPR_DATA = 'wiki.en.bin'
+# WORD_REPR = 'fasttext'
+WORD_REPR = 'word2vec'
+# WORD_REPR_DATA = 'wiki.ko.bin'
+WORD_REPR_DATA = 'ssg.300.bin'
+ENCODING = ''
 
 SAVE_PICKLE = True
 PICKLE_PARTITION_SIZE = 200000 # depends on the system RAM memory
 MODE = "SUFFIX"                #select between PREFIX and SUFFIX
-DICT = 'pkloutput_1m_partition_2/'
+DICT = 'korean_output/'
+
+BATCH_SIZE = 100
+DATA_SET = "MODEL"            #pickle
+
+print "INIT WORD MODEL"
+WORD_REP = vectorize_word(WORD_REPR, WORD_REPR_DATA)
+print "FINISHED LOADING MODEL"
 
 #make directory if it doesnt exist
 if not os.path.exists(DICT) and SAVE_PICKLE == True:
     os.makedirs(DICT)
 
 print "initialize data"
-with open(VOCAB_DATA, 'rb') as f:
-    FULL_DATA = pickle.load(f)
+if DATA_SET == "PICKLE":
+    with open(VOCAB_DATA, 'rb') as f:
+        FULL_DATA = pickle.load(f)
+elif DATA_SET == "MODEL":
+    # data_set = WORD_REP.model.wv
+    FULL_DATA = [k for (k, v) in WORD_REP.model.vocab.iteritems()]
+    # FULL_DATA = list(data_set)
+
+
+# print len(wordVocab)
+# print type(wordVocab)
+# for i in FULL_DATA[:000]:
+#     print i
+print FULL_DATA[:100]
+
+# exit()
+
 
 r_orth = {}
 r_sem = {}
@@ -38,10 +65,9 @@ w_sem = {}
 loc_sem = {}
 ss_sem = {}
 
-BATCH_SIZE = 1000000
-BATCH = FULL_DATA[:BATCH_SIZE]
 
 #CREATE SUPPORT SET
+BATCH = FULL_DATA[:BATCH_SIZE]
 
 if MODE == "SUFFIX":
     print "SUFFIX TREE BUILD"
@@ -54,8 +80,6 @@ else:
     SEGMENTED_WORD = morse_structure_reverse.getsegmentation(BATCH)
 
 
-print "initalizing word-vec dataset"
-WORD_REP = vectorize_word(WORD_REPR, WORD_REPR_DATA)
 
 counter = 0
 partition_index = 0
@@ -78,7 +102,7 @@ for rule, words in SEGMENTED_WORD.iteritems():
 
         total = len_w * len_w
         total_count = np.sum(count)
-        # print "RULE: " + str(rule)+ " Score: " + str(total_count) + "/" + str(total)
+        print "RULE: " + str(rule)+ " Score: " + str(total_count) + "/" + str(total)
 
 
 
@@ -93,9 +117,6 @@ for rule, words in SEGMENTED_WORD.iteritems():
             for index, word in enumerate(words):
 
                 loc_sem[word] = 1.0 *count[index]/float(len_w)
-                # print loc_sem[word]
-                # print count[index]
-                # print len_w
                 w_sem[word] = cos[index]
 
             support_set = []

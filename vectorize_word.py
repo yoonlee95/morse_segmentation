@@ -14,7 +14,8 @@ class vectorize_word(object):
         #data structure for storing neighbers of the current word
         elif type == "word2vec":
             print "loading word2vec model"
-            self.model = KeyedVectors.load_word2vec_format(data, binary=False)
+            self.model = KeyedVectors.load_word2vec_format(data, binary=True)
+            # self.model = KeyedVectors.load_word2vec_format(data, binary=True,unicode_errors='ignore' )
 
             print "loading done"
 
