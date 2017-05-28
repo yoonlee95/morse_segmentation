@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+# -*- coding: utf-8 -*-
 import os
 import numpy as np
 import pickle
@@ -10,6 +10,9 @@ from vectorize_word import vectorize_word
 import morse_structure
 import morse_structure_reverse
 
+import sys  
+reload(sys)  
+sys.setdefaultencoding('utf-8')
 __author__ = "Jong Yoon(John) Lee"
 __license__ = "MIT"
 __version__ = "alpha"
@@ -25,12 +28,23 @@ WORD_REPR_DATA = 'ssg.300.bin'
 ENCODING = ''
 
 SAVE_PICKLE = True
-PICKLE_PARTITION_SIZE = 200000 # depends on the system RAM memory
-MODE = "SUFFIX"                #select between PREFIX and SUFFIX
-DICT = 'korean_output/'
+PICKLE_PARTITION_SIZE = 10000 # depends on the system RAM memory
+MODE = "PREFIX"                #select between PREFIX and SUFFIX
+DICT = 'korean_output_full_rev_4/'
 
-BATCH_SIZE = 100
+BATCH_SIZE = 100000
 DATA_SET = "MODEL"            #pickle
+
+def remove_non_ascii(text):
+    return ''.join([i if ord(i) >= 128 else '' for i in text])
+
+def contain_non_ascii(text):
+    for i in text:
+        if ord(i) < 128:
+            return 1
+   
+    return 0
+    # return ''.join([i if ord(i) >= 128 else '' for i in text])
 
 print "INIT WORD MODEL"
 WORD_REP = vectorize_word(WORD_REPR, WORD_REPR_DATA)
@@ -49,15 +63,17 @@ elif DATA_SET == "MODEL":
     FULL_DATA = [k for (k, v) in WORD_REP.model.vocab.iteritems()]
     # FULL_DATA = list(data_set)
 
-
-# print len(wordVocab)
-# print type(wordVocab)
-# for i in FULL_DATA[:000]:
-#     print i
-print FULL_DATA[:100]
-
+BATCH_SIZE =  len(FULL_DATA)*1/3*8/10
+print BATCH_SIZE
+# count = 0
+# for i, item in enumerate(FULL_DATA):
+#     if contain_non_ascii(item) == 1:
+#         del FULL_DATA[i]
+# for i in FULL_DATA[:BATCH_SIZE]:
+#     print WORD_REP.get_vector(i.decode("utf-8"))
+# print count
+# print len(FULL_DATA)
 # exit()
-
 
 r_orth = {}
 r_sem = {}
@@ -79,7 +95,9 @@ else:
     print "PREFIX TREE BUILD"
     SEGMENTED_WORD = morse_structure_reverse.getsegmentation(BATCH)
 
-
+print "Number of Support Set: " + str(len(SEGMENTED_WORD))
+del BATCH
+del FULL_DATA
 
 counter = 0
 partition_index = 0
@@ -93,8 +111,14 @@ for rule, words in SEGMENTED_WORD.iteritems():
         pkl_saved = False
 
         for word in words:
-            w_1.extend(WORD_REP.get_vector(word[0]))
-            w_2.extend(WORD_REP.get_vector(word[1]))
+            # print word[0]
+            # print word[1]
+            # w_1.extend(WORD_REP.get_vector(word[0]))
+            # w_2.extend(WORD_REP.get_vector(word[1]))
+            w_1.extend(WORD_REP.get_vector(word[0].decode("utf-8", 'ignore')))
+            w_2.extend(WORD_REP.get_vector(word[1].decode("utf-8", 'ignore')))
+            # w_1.extend(WORD_REP.get_vector( unicode(word[0], 'utf-8','ignore')))
+            # w_1.extend(WORD_REP.get_vector( unicode(word[1], 'utf-8','ignore')))
         count, cos = get_distance_parallel(np.asarray(w_1, dtype=np.float32),
                                     np.asarray(w_2, dtype=np.float32))
 
@@ -102,7 +126,7 @@ for rule, words in SEGMENTED_WORD.iteritems():
 
         total = len_w * len_w
         total_count = np.sum(count)
-        print "RULE: " + str(rule)+ " Score: " + str(total_count) + "/" + str(total)
+        # print "RULE: " + str(rule)+ " Score: " + str(total_count) + "/" + str(total)
 
 
 
@@ -126,11 +150,11 @@ for rule, words in SEGMENTED_WORD.iteritems():
             
             if counter % PICKLE_PARTITION_SIZE == 0 and counter != 0:
                 print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"+ str(PICKLE_PARTITION_SIZE) + ")"
-                pickle.dump(r_orth, open(DICT+"r_orth"+str(partition_index)+".pkl", "wb"))
-                pickle.dump(r_sem, open(DICT+"r_sem"+str(partition_index)+".pkl", "wb"))
-                pickle.dump(w_sem, open(DICT+"w_sem"+str(partition_index)+".pkl", "wb"))
-                pickle.dump( loc_sem, open( DICT+"loc_sem"+str(partition_index)+".pkl", "wb"))
-                pickle.dump(ss_sem, open(DICT+"ss_sem"+str(partition_index)+".pkl", "wb"))
+                pickle.dump(r_orth, open(DICT+"r_orth_"+str(partition_index)+".pkl", "wb"))
+                pickle.dump(r_sem, open(DICT+"r_sem_"+str(partition_index)+".pkl", "wb"))
+                pickle.dump(w_sem, open(DICT+"w_sem_"+str(partition_index)+".pkl", "wb"))
+                pickle.dump( loc_sem, open( DICT+"loc_sem_"+str(partition_index)+".pkl", "wb"))
+                pickle.dump(ss_sem, open(DICT+"ss_sem_"+str(partition_index)+".pkl", "wb"))
                 partition_index += 1
 
                 r_orth = {}
@@ -142,11 +166,11 @@ for rule, words in SEGMENTED_WORD.iteritems():
             
 if SAVE_PICKLE is True and pkl_saved is not True:
     print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"+ str(PICKLE_PARTITION_SIZE) + ") FINAL"
-    pickle.dump(r_orth, open(DICT+"r_orth"+str(partition_index)+".pkl", "wb"))
-    pickle.dump(r_sem, open(DICT+"r_sem"+str(partition_index)+".pkl", "wb"))
-    pickle.dump(w_sem, open(DICT+"w_sem"+str(partition_index)+".pkl", "wb"))
-    pickle.dump( loc_sem, open( DICT+"loc_sem"+str(partition_index)+".pkl", "wb"))
-    pickle.dump(ss_sem, open(DICT+"ss_sem"+str(partition_index)+".pkl", "wb"))
+    pickle.dump(r_orth, open(DICT+"r_orth_"+str(partition_index)+".pkl", "wb"))
+    pickle.dump(r_sem, open(DICT+"r_sem_"+str(partition_index)+".pkl", "wb"))
+    pickle.dump(w_sem, open(DICT+"w_sem_"+str(partition_index)+".pkl", "wb"))
+    pickle.dump( loc_sem, open( DICT+"loc_sem_"+str(partition_index)+".pkl", "wb"))
+    pickle.dump(ss_sem, open(DICT+"ss_sem_"+str(partition_index)+".pkl", "wb"))
 
 
 
