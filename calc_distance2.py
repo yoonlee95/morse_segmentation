@@ -47,13 +47,14 @@ def get_distance_parallel(w_1, w_2):
 
         Cos_dist(A_gpu,B_gpu, C_gpu, Count_gpu, np.int32(number_of_element), block=(32,16,1), grid=(blocksPerGrid,1))
 
-        cuda.memcpy_dtoh(Count, Count_gpu)
-        cuda.memcpy_dtoh(C, C_gpu)
 
         #Free the memories
         A_gpu.free()
         B_gpu.free()
+
+        cuda.memcpy_dtoh(C, C_gpu)
         C_gpu.free()
+        cuda.memcpy_dtoh(Count, Count_gpu)
         Count_gpu.free()
 
         # print C

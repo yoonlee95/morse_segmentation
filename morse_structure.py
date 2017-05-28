@@ -1,9 +1,24 @@
+# -*- coding: utf-8 -*-
+
 import pickle
 from Queue import *
 from tree_structure import ALPHABETTREE
 from wordGroup import WORDGROUP
 import time
 
+def contain_non_ascii(text):
+    for i in text:
+        # if ord(i) < 128:
+        if (ord(i) < 0x3130 or ord(i) > 0xD79E ):
+            # print text
+            # k = []
+            # for i in text:
+            #      k.append(i)
+            # print k
+
+            return 1
+
+    return 0
 def getsegmentation(data):
     word_segmentation = {}
 
@@ -18,8 +33,8 @@ def getsegmentation(data):
         if counter % progress == 0:
             print("BUILT "+str(counter/progress*10)+ " % of DATA")
 
-
-
+        if contain_non_ascii(word) == 1 :
+            continue
 
         cur_node = ROOT
         #####################################################
