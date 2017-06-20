@@ -1,6 +1,12 @@
 {
     "language" : "korean",
-    "number_of_words" : 100000,
+
+    "batch_size" : 10000,
+    "partition_size" : 100000,
     "mode" : "SUFFIX",
-    "output_dir" : "korean_output_1m/"
+    "mode_type" : "fasttext",
+    "output_dir" : "./kor_text_5",
+
+    "base_word" : 1,
+    "edit_distance" : 4
 }

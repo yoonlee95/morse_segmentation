@@ -33,17 +33,18 @@ def getsegmentation(data, base_word_len, edit_dist):
         if counter % progress == 0:
             print("BUILT "+str(counter/progress*10)+ " % of DATA")
 
-        if contain_ascii(word) == 1 :
-            # print word
-            continue
+        # if contain_ascii(word) == 1 :
+        #     # print word
+        #     continue
+        # word = word.lower()
 
         cur_node = ROOT
         #####################################################
         #traverse the tree using the letters of the word#####
         #Create new nodes if neccesary.                 #####
         #####################################################
-        # word = word.lower()
         word_len = len(word)
+
         for pos, letter in enumerate(word):
 
             cur_node = cur_node.traverse_alphabet(letter)

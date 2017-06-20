@@ -108,4 +108,6 @@ ENV/
 pkloutput100k_wrong/
 textoutput/
 *.bin
+*.vec
+*.zip
 *.pkl

@@ -30,7 +30,6 @@ for i in range(0,26):
     if (r_1,r_2) in mydict1:
         print "r_sem"
         print mydict1[(r_1,r_2)]
-
     if (w_1,w_2) in mydict2:
         print "loc_sem"
         print mydict2[(w_1,w_2)]
