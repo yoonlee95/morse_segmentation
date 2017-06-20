@@ -28,9 +28,9 @@ WORD_REPR_DATA = 'ssg.300.bin'
 ENCODING = ''
 
 SAVE_PICKLE = True
-PICKLE_PARTITION_SIZE = 10000 # depends on the system RAM memory
-MODE = "PREFIX"                #select between PREFIX and SUFFIX
-DICT = 'korean_output_full_rev_4/'
+PICKLE_PARTITION_SIZE = 100000 # depends on the system RAM memory
+MODE = "SUFFIX"                #select between PREFIX and SUFFIX
+DICT = 'korean_output_1m/'
 
 BATCH_SIZE = 100000
 DATA_SET = "MODEL"            #pickle
@@ -63,8 +63,10 @@ elif DATA_SET == "MODEL":
     FULL_DATA = [k for (k, v) in WORD_REP.model.vocab.iteritems()]
     # FULL_DATA = list(data_set)
 
-BATCH_SIZE =  len(FULL_DATA)*1/3*8/10
-print BATCH_SIZE
+
+# BATCH_SIZE =  len(FULL_DATA)*1/3*8/10
+# print BATCH_SIZE
+
 # count = 0
 # for i, item in enumerate(FULL_DATA):
 #     if contain_non_ascii(item) == 1:
@@ -83,11 +85,14 @@ ss_sem = {}
 
 
 #CREATE SUPPORT SET
-BATCH = FULL_DATA[:BATCH_SIZE]
+BATCH = FULL_DATA[:1000000]
+# BATCH = FULL_DATA
 
 if MODE == "SUFFIX":
     print "SUFFIX TREE BUILD"
-    SEGMENTED_WORD = morse_structure.getsegmentation(BATCH)
+    SEGMENTED_WORD = morse_structure.getsegmentation(BATCH,1,3)
+    # for k, v in SEGMENTED_WORD.iteritems():
+    #     print k, v
 else:
     for index in range(BATCH_SIZE):
         if len(BATCH[index]) > 0:

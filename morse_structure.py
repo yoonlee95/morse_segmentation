@@ -6,10 +6,10 @@ from tree_structure import ALPHABETTREE
 from wordGroup import WORDGROUP
 import time
 
-def contain_non_ascii(text):
+def contain_ascii(text):
     for i in text:
-        # if ord(i) < 128:
-        if (ord(i) < 0x3130 or ord(i) > 0xD79E ):
+         if ord(i) < 128:
+#        if (ord(i) < 0x3130 or ord(i) > 0xD79E ):
             # print text
             # k = []
             # for i in text:
@@ -19,7 +19,7 @@ def contain_non_ascii(text):
             return 1
 
     return 0
-def getsegmentation(data):
+def getsegmentation(data, base_word_len, edit_dist):
     word_segmentation = {}
 
     ROOT = ALPHABETTREE(None, '', 0)
@@ -33,7 +33,8 @@ def getsegmentation(data):
         if counter % progress == 0:
             print("BUILT "+str(counter/progress*10)+ " % of DATA")
 
-        if contain_non_ascii(word) == 1 :
+        if contain_ascii(word) == 1 :
+            # print word
             continue
 
         cur_node = ROOT
@@ -41,7 +42,7 @@ def getsegmentation(data):
         #traverse the tree using the letters of the word#####
         #Create new nodes if neccesary.                 #####
         #####################################################
-        word = word.lower()
+        # word = word.lower()
         word_len = len(word)
         for pos, letter in enumerate(word):
 
@@ -65,15 +66,15 @@ def getsegmentation(data):
         traverse_node = prev_node
         pos = traverse_node.get_position()
         # print pos
-        if pos < 3:
+        if pos < base_word_len:
             pass
-        elif pos == 3:
+        elif pos == base_word_len:
             #add extended words
             for node in cur_node.get_next_alphabets():
-                neighbor_nodes.put((node, 3, 1))
+                neighbor_nodes.put((node, base_word_len, 1))
 
         else:
-            for i in range(5):
+            for i in range(edit_dist-1):
 
                 prev_node = traverse_node
                 traverse_node = traverse_node.get_prev_pos()
@@ -96,7 +97,7 @@ def getsegmentation(data):
                                 word_segmentation[segmentation] = [] 
                             word_segmentation[segmentation].append((cur_word, word))
 
-                if pos < 4:
+                if pos < base_word_len + 1:
                     break
 
 
@@ -112,7 +113,7 @@ def getsegmentation(data):
                 # cur_word_group.add_word(cur_group.get_word())
 
             end_node = traverse_node.get_prev_pos()
-            if pos-1 >= 3:
+            if pos-1 >= base_word_len:
 
                 cur_word = end_node.get_word()
                 if cur_word:
@@ -177,7 +178,7 @@ def getsegmentation(data):
 
 
             #add next level if should
-            if level < 6:
+            if level < edit_dist:
                 neighbors = node.get_next_alphabets()
 
                 for neighbor in neighbors:
@@ -211,7 +212,7 @@ if __name__ == "__main__":
     #     d[index] = d[index][::-1]
     # d = len(full_data)
     # d = ['discriminating', 'discriminatory', 'discrimination', 'discriminate','discriminates',  'discriminated']
-    # d = [ 'aaaaaa', 'aaaaaab','aaaaaabb',  'aaaaaabbb', 'aaaaaabbbb', 'aaaaaabbbbb', 'aaaaaabbbbbb', 'aaaaaabbbbbbb','aa','aaa','aaaa','aaaaaac','aaaaa']
+    d = [ 'aaaaaa', 'aaaaaab','aaaaaabb',  'aaaaaabbb', 'aaaaaabbbb', 'aaaaaabbbbb', 'aaaaaabbbbbb', 'aaaaaabbbbbbb','aa','aaa','aaaa','aaaaaac','aaaaa']
     # d = ['aaa','aaa']
     # i = [['aaaaaab','aaaaaa' ],['aaaaaabb','aaaaaa' ],['aaaaaabbb','aaaaaa' ],['aaaaaabbbb','aaaaaa' ],['aaaaaabbbbb','aaaaaa' ],['aaaaaabbbbbb','aaaaaa' ],['aaaaabbbbb','aaaaaa' ],['aaaaaabbbbbbb','aaaaaa']]
     # d = ['aaaccc','aaabbbb']

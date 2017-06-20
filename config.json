@@ -1,3 +1,6 @@
 {
-    ""
+    "language" : "korean",
+    "number_of_words" : 100000,
+    "mode" : "SUFFIX",
+    "output_dir" : "korean_output_1m/"
 }
