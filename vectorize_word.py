@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+import sys
+sys.path.insert(0, '/home/johnlee/Research/morse/fasttext/fasttext')
 import fasttext
 # from gensim.keyedvectors import KeyedVectors
 # import gensim
@@ -5,25 +8,39 @@ from gensim.models.keyedvectors import KeyedVectors
 # import word2vec
 class vectorize_word(object):
 
-    def __init__(self, type, data):
+    def __init__(self, type, data, batch):
 
         if type == "fasttext":
             print "loading fasttext model"
-            self.model = fasttext.load_model(data)
-            print "loading done"
-        #data structure for storing neighbers of the current word
-        elif type == "word2vec":
-            print "loading word2vec model"
-            # self.model = KeyedVectors.load_word2vec_format(data, binary=True)
-            self.model = KeyedVectors.load_word2vec_format(data, binary=True,unicode_errors='ignore' )
+            print data
+            self.model = fasttext.load_model("")
+            # self.words =  self.model.words[:batch]
+            self.words =  (list(self.model.words))[:batch]
 
-            print self.model
-            print "loading done"
+        elif type == "word2vec":
+
+            print "loading word2vec model"
+            # self.model = KeyedVectors.load_word2vec_format(data, binary=False,unicode_errors='ignore' )
+            self.model = KeyedVectors.load_word2vec_format(data, binary=False)
+
+            counter = 0 
+            self.words = []
+            for (k,_) in self.model.vocab.iteritems():
+                counter += 1
+                if counter == batch:
+                    break
+                self.words.append(k)
+                print k
+
+        print "loading done"
+
 
 
 
     def get_vector(self, word):
-        return self.model[word]
+        return self.model[unicode(word,"utf-8")]
+    def get_words(self):
+        return self.words
 
 
 
