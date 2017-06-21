@@ -18,17 +18,22 @@ __license__ = "MIT"
 __version__ = "alpha"
 __email__ = "jlee642@illinois.edu"
 
-WORD_REPR = 'word2vec'
+def start_morse(model_file, config):
+    """ make support set and calculate score
 
-def start_morse(word_repr_model, batch_size, pickle_partition_size, mode, output_dict, base_word, edit_distance):
+    Args:
+        model_file (str): path to model file
 
-    # WORD_REPR = 'fasttext'
+    Returns:
+        config (object) : config file for morse
+
+    """
 
     print "INIT WORD MODEL"
-    wmodel = WORDMODEL(WORD_REPR, word_repr_model, batch_size)
+    wmodel = WORDMODEL(config['model_type'], model_file, config['batch_size'])
     print "FINISHED LOADING MODEL"
-    BATCH = wmodel.get_words()
 
+    batch = wmodel.get_words()
 
     r_orth = {}
     r_sem = {}
@@ -36,30 +41,32 @@ def start_morse(word_repr_model, batch_size, pickle_partition_size, mode, output
     loc_sem = {}
     ss_sem = {}
 
-
     #CREATE SUPPORT SET
-
-    if mode == "SUFFIX":
+    if config['mode'] == "SUFFIX":
         print "SUFFIX TREE BUILD"
-        SEGMENTED_WORD = morse_structure.getsegmentation(BATCH,base_word,edit_distance)
-        # for k, v in SEGMENTED_WORD.iteritems():
-        #     print k, v
+        support_set = morse_structure.getsegmentation(batch, config['base_word'],
+                                                      config['edit_distance'])
     else:
-        for index in range(len(BATCH)):
-            if len(BATCH[index]) > 0:
-                BATCH[index] = BATCH[index][::-1]
         print "PREFIX TREE BUILD"
-        SEGMENTED_WORD = morse_structure_reverse.getsegmentation(BATCH, base_word, edit_distance)
+        for index, _ in enumerate(batch):
+            if len(batch[index]) > 0:
+                batch[index] = batch[index][::-1]
+        support_set = morse_structure_reverse.getsegmentation(batch, config['base_word'],
+                                                              config['edit_distance'])
 
-    print "Number of Support Set: " + str(len(SEGMENTED_WORD))
-    del BATCH
+    print "Number of Support Set: " + str(len(support_set))
+    del batch
 
     counter = 0
     partition_index = 0
 
     pkl_saved = False
+
+    pickle_partition_size = config['partition_size']
+    output_dict = config['output_dir']
+
     #CALCULATE THE SCORES(LOCAL ,GLOBAL) FOR THE SUPPORT SETS
-    for rule, words in SEGMENTED_WORD.iteritems():
+    for rule, words in support_set.iteritems():
         w_1 = []
         w_2 = []
         if len(words) > 1:
@@ -86,14 +93,14 @@ def start_morse(word_repr_model, batch_size, pickle_partition_size, mode, output
             for word in words:
                 support_set.append(word)
             ss_sem[rule] = support_set
-            
 
             if counter % pickle_partition_size == 0:
-                print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"+ str(pickle_partition_size) + ")"
+                print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"\
+                                               + str(pickle_partition_size) + ")"
                 pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"))
-                pickle.dump( loc_sem, open( output_dict+"/loc_sem_"+str(partition_index)+".pkl"))
+                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl"))
                 pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"))
                 partition_index += 1
 
@@ -105,14 +112,16 @@ def start_morse(word_repr_model, batch_size, pickle_partition_size, mode, output
                 pkl_saved = True
 
     if pkl_saved is not True:
-        print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"+ str(pickle_partition_size) + ") FINAL"
+        print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"\
+                                 + str(pickle_partition_size) + ") FINAL"
         pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"))
         pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"))
         pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"))
-        pickle.dump( loc_sem, open( output_dict+"/loc_sem_"+str(partition_index)+".pkl", "wb"))
+        pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl", "wb"))
         pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"))
 
 
 
 if __name__ == '__main__':
-    start_morse('wiki.en.bin', 100000, 100000, 'SUFFIX', './test_1/', 1, 4)
+    CONFIG = json.loads(open('./default-config').read())
+    start_morse('wiki.en.bin', CONFIG)

@@ -9,35 +9,39 @@ class WORDMODEL(object):
 
     def __init__(self, type, data, batch):
 
+        self.type = type
         if type == "fasttext":
             print "loading fasttext model"
-            print data
-            self.model = fasttext.load_model("")
-            # self.words =  self.model.words[:batch]
-            self.words = (list(self.model.words))[:batch]
-
+            self.model = fasttext.load_model(data)
+            if batch != -1:
+                self.words = (list(self.model.words))[:batch]
+            else:
+                self.words = list(self.model.words)
         elif type == "word2vec":
 
             print "loading word2vec model"
             self.model = KeyedVectors.load_word2vec_format(data, binary=False)
 
-            counter = 0
             self.words = []
-            for (k, _) in self.model.vocab.iteritems():
-                counter += 1
-                if counter == batch:
-                    break
-                self.words.append(k)
-                print k
+            if batch != -1:
+                counter = 0
+                for (k, _) in self.model.vocab.iteritems():
+                    counter += 1
+                    if counter == batch:
+                        break
+                    self.words.append(k)
+            else:
+                for (k, _) in self.model.vocab.iteritems():
+                    self.words.append(k)
 
         print "loading done"
 
-
-
-
     def get_vector(self, word):
-        return self.model[unicode(word,"utf-8")]
+        """get vector of the word"""
+        return self.model[unicode(word, "utf-8")]
+
     def get_words(self):
+        """ get the list of words """
         return self.words
 
 
@@ -45,8 +49,6 @@ class WORDMODEL(object):
 if __name__ == "__main__":
 
 
-    word_rep = vectorize_word('word2vec','wiki.en.vec')
-
-
+    word_rep = vectorize_word('word2vec','wiki.en.vec', -1)
     vector =   word_rep.get_vector('king')
     print len(vector)
