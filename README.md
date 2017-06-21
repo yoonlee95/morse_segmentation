@@ -40,7 +40,10 @@ main.py
 
 
 ```
+### example
 
+
+`python main.py -l korean -b 1000000 -p -1 -m SUFFIX -t word2vec -o korean_1m -w 1 -e 3`
 ### Output
 
 **ss_sem_[0-9]** , **w_sem_[0-9]**, **loc_sem_[0-9]**, **r_sem_[0-9]** and **r_orth_[0-9]** partitions explained in [1] in your `output directory`.
