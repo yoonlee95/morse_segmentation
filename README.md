@@ -31,12 +31,13 @@ Run `python main.py` with the following arguments. Values from `default-config.j
 main.py
  -l <input language>       Language to run morse segmentation on
  -b <batch size>           Number of words to segment from model( -1 for full dataset)
- -p <partition size>       Number of words to group as a partition( -1 for one output file)
+ -p <partition size>       Number of words to group as a partition( -1 for no partition)
  -m <mode>                 Segment type (<SUFFIX> or <PREFIX>)
  -t <model type>           Select mode (<fasttext> or <word2vec>)
  -o <output directory>     Output directory
  -w <base word>            Minimum length of a word
- -e <edit distance>        Maximum edit distance a word can have beween another word in a SS
+ -e <edit distance>        Maximum edit distance a word can have beween another word in a SS""" 
+
 
 ```
 **Note**
