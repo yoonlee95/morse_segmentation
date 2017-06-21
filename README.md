@@ -2,6 +2,8 @@
 
 Multi-language Full pipeline of MORpheme Segementor
 
+The project will download the vector model file, create support_set score 
+
 ## Requirement
 
 **System Requirement**
@@ -9,7 +11,7 @@ Multi-language Full pipeline of MORpheme Segementor
 Linux enviorment with
 
 1. NVIDIA GPU
-2. 16GB > RAM
+2. 16GB or more RAM
 
 **Dependencies**
 
@@ -21,30 +23,29 @@ Linux enviorment with
     2. [gensim](https://radimrehurek.com/gensim/)
     3. [pycuda](https://documen.tician.de/pycuda/)
     
-    Can be installed with pip `sudo pip install --upgrade gensim numpy pikle pycuda`
+    Can be installed with pip `sudo pip install --upgrade numpy gensim pycuda`
 
+## How to use
 
-
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+Run `python main.py` with the following arguments. Values from `default-config.json` will be used if argument is not given.
 
 ```
-Give an example
-```
+main.py
+ -l <input language>       Language to run morse segmentation on
+ -b <batch size>           Number of words to segment from model( -1 for full dataset)
+ -p <partition size>       Number of words to group as a partition( -1 for one output file)
+ -m <mode>                 Segment type (<SUFFIX> or <PREFIX>)
+ -t <model type>           Select mode (<fasttext> or <word2vec>)
+ -o <output directory>     Output directory
+ -w <base word>            Minimum length of a word
+ -e <edit distance>        Maximum edit distance a word can have beween another word in a SS
 
-### And coding style tests
-
-Explain what these tests test and why
-
 ```
-Give an example
-```
+**Note**
+
+* You should consider to use smaller partition_size if you want to run a bigger number of words
+* Pre-Trained language are downloaded from https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md 
+* With 16GB of RAM you should be able run a batch size of 1M (Can vary with base word and edit distance).
 
 ## Authors
 
