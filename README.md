@@ -1,8 +1,6 @@
 # MORpheme SEgment-er
 
-Multi-language Full pipeline of MORpheme Segementor
-
-The project will download the vector model file, create support_set score 
+Multi-language Full pipeline of MORpheme Segementor based on [1]
 
 ## Requirement
 
@@ -47,6 +45,10 @@ main.py
 * Pre-Trained language are downloaded from https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md 
 * With 16GB of RAM you should be able run a batch size of 1M (Can vary with base word and edit distance).
 
+## Reference
+
+[1] Tarek Sakakini, Suma Bhat, Pramod Viswanath, [MORSE: Semantic-ally Drive-n MORpheme SEgment-er](https://arxiv.org/abs/1702.02212)
+ 
 ## Authors
 
 * **Jong Yoon Lee(UIUC)** - jlee642@illinois.edu
