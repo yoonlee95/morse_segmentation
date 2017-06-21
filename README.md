@@ -40,7 +40,7 @@ main.py
 
 
 ```
-**Note**
+**Notes**
 
 * You should consider to use smaller partition_size if you want to run a bigger number of words
 * Pre-Trained language are downloaded from https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md 
@@ -53,4 +53,6 @@ main.py
 ## Authors
 
 * **Jong Yoon Lee(UIUC)** - jlee642@illinois.edu
+
+Supervised By
 * **Tarek Sakakini(UIUC)** - sakakini@illinois.edu
