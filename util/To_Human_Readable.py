@@ -2,8 +2,6 @@
 
 import pickle
 
-
-
 ss_file = open('ss_sem_H.txt', 'w')
 r_sem_file = open('r_sem_H.txt', 'w')
 
@@ -16,7 +14,6 @@ for i in range(0,26):
 
     for i in mydict1:
         ss = mydict1[i]
-        # string = u'(' + unicode(i[0]) +u','+ unicode(i[1]) + u') : ', u' [' + u','.join([u"(" + unicode(s[0])+u","+unicode(s[1]) + u")" for s in ss]) + u']'
         string = unicode(i[0]) +u','+ unicode(i[1]) 
         string += u' [' + u','.join([u"(" + unicode(s[0])+u","+unicode(s[1]) + u")" for s in ss]) + u']'
         string += u'\r\n'

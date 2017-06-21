@@ -1,10 +1,10 @@
 {
-    "language" : "korean",
+    "language" : "english",
 
     "batch_size" : 10000,
     "partition_size" : 100000,
     "mode" : "SUFFIX",
-    "model_type" : "fasttext",
+    "model_type" : "word2vec",
     "output_dir" : "./kor_text_5",
 
     "base_word" : 1,

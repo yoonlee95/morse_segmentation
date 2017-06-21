@@ -307,8 +307,6 @@ cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int num
 
 
   int curr_entry = blockDim.y * blockIdx.x + threadIdx.y;
-  // printf("%d\n",curr_entry);
-
 
   float A_L2_NORM = B_L2_NORM[curr_entry];
   float W_4_LOCAL[10];
@@ -403,80 +401,3 @@ cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int num
 
 
 }
-
-
-
-
-
-
-// __global__ void vecAdd(float *w, float *out, int entry) {
-
-//   __shared__ float w_curr_1_partition[BLOCK_DIM_Y][BLOCK_DIM_X];
-//   __shared__ float w_curr_2_partition[BLOCK_DIM_Y][BLOCK_DIM_X];
-
-//   float w_4_partition[10];
-//   float w_3_partition[10];
-
-//   float AB_partition[BLOCK_DIM_Y];
-//   float B_partition[BLOCK_DIM_Y];
-//   int cos_count = 0 ;
-
-//   int index = blockIdx.x * (blockdim.y) + threadIdx.y;
-
-//   int partition_index = 0;
-
-//   int BLOCK_START_INDEX = index * 2 * VECTOR_DIM;
-//   // Fill the W_4 and W_3 
-//   for(int partition_index = 0; partition_index * PARTITION_DIM < VECTOR_DIM; partition_index += 1 )
-
-//     if(partition_index * PARTITION_DIM< VECTOR_DIM){
-//       w_4_partition[partition_index] = w[BLOCK_START_INDEX + VECTOR_DIM +  partition_index * PARTITION_DIM + threadIdx.x];
-//       w_3_partition[partition_index] = w[BLOCK_START_INDEX + partition_index * PARTITION_DIM + threadIdx.x];
-//     }
-//   __syncthreads();
-      
-
-//   //Loop through the entries
-//   for(int entry_index = 0; entry_index < entry; entry_index = entry_index + BLOCK_DIM_Y){
-
-
-
-
-//       SHARED_START_INDEX= (entry_index + threadIdx.y) * 2 * VECTOR_DIM;
-//       for(int shared_index = 0; shared_index < VECTOR_DIM; shared_index += PARTITION_DIM ){
-//         w_curr_1_partition[threadIdx.y][threadIdx.x] = w[SHARED_START_INDEX + shared_index + threaIdx.x];
-//         w_curr_2_partition[threadIdx.y][threadIdx.x] = w[SHARED_START_INDEX + VECTOR_DIM + shared_index + threadIdx.x];
-
-//         __syncthreads();
-//         int w_index = shared_index/PARTITION_DIM;
-
-
-//         B = w_3_partition[w_index] - w_curr_2_partition[threadIdx.y][threadIdx.x] + w_curr_1_partition[threadIdx.y][threadIdx.x];
-//         B_partition[threadIdx.y] += B * B;
-//         AB_partition[threadIdx.y] += w_4_partition[w_index] * B 
-
-//       }
-      
-
-
-//   }
-
-
-
-
-
-
-//   // for(int i = index; i == index-1; i = (i+BLOCK_SIZE)%entry){
-//   // }
-//   // for(int i = index; i == index-1; i = (i+BLOCK_SIZE)%entry){
-
-//   // }
-
-//   // double cur_word;
-
-//   // if (i < len){
-//     out[i] = w[i+300*2] + w[i+300*1] - w[i];
-//   // } 
-
-
-// }
