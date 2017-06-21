@@ -9,7 +9,7 @@ Multi-language Full pipeline of MORpheme Segementor based on [1]
 Linux enviorment with
 
 1. NVIDIA GPU
-2. 16GB or more RAM
+2. Recommended 32GB or more RAM
 
 **Dependencies**
 
