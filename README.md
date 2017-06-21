@@ -1,6 +1,6 @@
 # MORpheme SEgment-er
 
-Multi-language Full pipeline of MORpheme Segementor based on [1]
+Multi-language full pipeline of MORpheme Segementor based on [1]
 
 ## Requirement
 
@@ -40,8 +40,13 @@ main.py
 
 
 ```
-**Notes**
 
+### Output
+
+**ss_sem_[0-9]** , **w_sem_[0-9]**, **loc_sem_[0-9]**, **r_sem_[0-9]** and **r_orth_[0-9]** partitions explained in [1] in your `output directory`.
+
+**Notes**
+* Currently only support word2vec mode ( python fasttext needs to be updated)
 * You should consider to use smaller partition_size if you want to run a bigger number of words
 * Pre-Trained language are downloaded from https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md 
 * With 16GB of RAM you should be able run a batch size of 1M (Can vary with base word and edit distance).
