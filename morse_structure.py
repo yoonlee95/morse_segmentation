@@ -3,22 +3,14 @@
 import pickle
 from Queue import *
 from tree_structure import ALPHABETTREE
-from wordGroup import WORDGROUP
 import time
 
 def contain_ascii(text):
     for i in text:
          if ord(i) < 128:
-#        if (ord(i) < 0x3130 or ord(i) > 0xD79E ):
-            # print text
-            # k = []
-            # for i in text:
-            #      k.append(i)
-            # print k
-
             return 1
-
     return 0
+
 def getsegmentation(data, base_word_len, edit_dist):
     word_segmentation = {}
 
@@ -32,11 +24,6 @@ def getsegmentation(data, base_word_len, edit_dist):
         counter += 1
         if counter % progress == 0:
             print("BUILT "+str(counter/progress*10)+ " % of DATA")
-
-        # if contain_ascii(word) == 1 :
-        #     # print word
-        #     continue
-        # word = word.lower()
 
         cur_node = ROOT
         #####################################################
@@ -56,7 +43,7 @@ def getsegmentation(data, base_word_len, edit_dist):
             # print cur_node.get_word()
             continue
 
-        #3#####################################################
+        #######################################################
         ## reset traverse_node to staring to scanning range####
         ## Gets the nodes to explore with depth it should#####
         #######################################################
@@ -95,7 +82,7 @@ def getsegmentation(data, base_word_len, edit_dist):
                         if cur_word:
                             segmentation = ("", word[pos+1:])
                             if not word_segmentation.has_key(segmentation):
-                                word_segmentation[segmentation] = [] 
+                                word_segmentation[segmentation] = []
                             word_segmentation[segmentation].append((cur_word, word))
 
                 if pos < base_word_len + 1:
@@ -107,9 +94,9 @@ def getsegmentation(data, base_word_len, edit_dist):
             pos = traverse_node.get_position()
 
             if cur_word:
-                segmentation =("", word[pos:])
+                segmentation = ("", word[pos:])
                 if not word_segmentation.has_key(segmentation):
-                    word_segmentation[segmentation] = [] 
+                    word_segmentation[segmentation] = []
                 word_segmentation[segmentation].append((cur_word, word))
                 # cur_word_group.add_word(cur_group.get_word())
 
@@ -133,7 +120,7 @@ def getsegmentation(data, base_word_len, edit_dist):
         #Get all the word objects created by the graph#
         ###############################################
 
-        while neighbor_nodes.empty() == False:
+        while neighbor_nodes.empty() is False:
 
             node, start, level = neighbor_nodes.get()
 

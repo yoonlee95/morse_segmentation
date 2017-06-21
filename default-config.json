@@ -4,7 +4,7 @@
     "batch_size" : 10000,
     "partition_size" : 100000,
     "mode" : "SUFFIX",
-    "mode_type" : "fasttext",
+    "model_type" : "fasttext",
     "output_dir" : "./kor_text_5",
 
     "base_word" : 1,

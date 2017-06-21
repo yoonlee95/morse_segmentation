@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
+
 import sys
-sys.path.insert(0, '/home/johnlee/Research/morse/fasttext/fasttext')
+#sys.path.insert(0, '/home/johnlee/Research/morse/fasttext/fasttext') #DEBUGGING PURPOSE
 import fasttext
-# from gensim.keyedvectors import KeyedVectors
-# import gensim
 from gensim.models.keyedvectors import KeyedVectors
-# import word2vec
-class vectorize_word(object):
+
+class WORDMODEL(object):
 
     def __init__(self, type, data, batch):
 
@@ -15,17 +14,16 @@ class vectorize_word(object):
             print data
             self.model = fasttext.load_model("")
             # self.words =  self.model.words[:batch]
-            self.words =  (list(self.model.words))[:batch]
+            self.words = (list(self.model.words))[:batch]
 
         elif type == "word2vec":
 
             print "loading word2vec model"
-            # self.model = KeyedVectors.load_word2vec_format(data, binary=False,unicode_errors='ignore' )
             self.model = KeyedVectors.load_word2vec_format(data, binary=False)
 
-            counter = 0 
+            counter = 0
             self.words = []
-            for (k,_) in self.model.vocab.iteritems():
+            for (k, _) in self.model.vocab.iteritems():
                 counter += 1
                 if counter == batch:
                     break

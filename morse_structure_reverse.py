@@ -3,7 +3,6 @@
 import pickle
 from Queue import *
 from tree_structure import ALPHABETTREE
-from wordGroup import WORDGROUP
 import time
 
 def contain_non_ascii(text):
