@@ -59,6 +59,6 @@ class WORDMODEL(object):
 if __name__ == "__main__":
 
 
-    word_rep = vectorize_word('word2vec','wiki.en.vec', -1)
+    word_rep = vectorize_word('word2vec','wiki.en.vec', -1, 100)
     vector =   word_rep.get_vector('king')
     print len(vector)
