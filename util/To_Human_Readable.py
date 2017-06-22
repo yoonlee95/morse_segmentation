@@ -1,9 +1,14 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import pickle
 
-DIR = '../test_3/'
+# DIR = '../test_3/'
+if len(sys.argv) != 2:
+    print "Input Argument Missing : Input_Dir"
+    exit()
+DIR = sys.argv[1]
 
 if not os.path.exists('human_readable'):
     os.makedirs('human_readable')
@@ -11,15 +16,14 @@ if not os.path.exists('human_readable'):
 ss_file = open('human_readable/ss_sem_H.txt', 'w')
 rule_file = open('human_readable/rule_H.txt', 'w')
 cos_file = open('human_readable/cos_H.txt', 'w')
-# r_orth_file = open('human_readable/r)orth_H.txt', 'w')
 
 
 for i in range(0,1):
 
-    ss_sem = open(DIR + 'ss_sem_'+str(i)+'.pkl', 'rb')
-    r_sem = open(DIR + 'r_sem_'+str(i)+'.pkl', 'rb')
-    r_orth = open(DIR + 'r_orth_'+str(i)+'.pkl', 'rb')
-    w_sem = open(DIR + 'w_sem_'+str(i)+'.pkl', 'rb')
+    ss_sem = open(DIR + '/ss_sem_'+str(i)+'.pkl', 'rb')
+    r_sem = open(DIR + '/r_sem_'+str(i)+'.pkl', 'rb')
+    r_orth = open(DIR + '/r_orth_'+str(i)+'.pkl', 'rb')
+    w_sem = open(DIR + '/w_sem_'+str(i)+'.pkl', 'rb')
     mydict1 = pickle.load(ss_sem)
     mydict2 = pickle.load(r_sem)
     mydict3 = pickle.load(r_orth)
