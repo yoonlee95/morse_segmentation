@@ -100,7 +100,7 @@ def start_morse(model_file, config):
                 pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"))
-                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl"))
+                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl"), "wb")
                 pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"))
                 partition_index += 1
 

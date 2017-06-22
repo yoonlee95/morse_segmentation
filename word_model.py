@@ -34,8 +34,9 @@ class WORDMODEL(object):
 
                 full_word = sorted(full_word, key=lambda x: x[1], reverse=True)
 
+                print full_word[0]
                 for i in range(batch):
-                    self.words.append(full_word[i][0])
+                    self.words.append((full_word[i])[0])
 
                 print "Sorting Done"
 
