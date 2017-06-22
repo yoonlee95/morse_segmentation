@@ -31,7 +31,7 @@ L2_norm(float *g_idata, float *g_odata)
 
   sdata[tid] += A * A; 
 
-  if(tid + blockDim.x < 300){
+  if(tid + blockDim.x < 300){   // blockDimx.x = 256
     A = g_idata[tid + blockDim.x + VECTOR_DIM * blockIdx.x];
     sdata[tid] += A * A;
   }
@@ -87,7 +87,7 @@ Dot_product(float *A_input, float *B_input,float * output)
 
   if(tid + blockDim.x < 300){
     A = A_input[tid + blockDim.x + VECTOR_DIM * blockIdx.x];
-    A = B_input[tid + blockDim.x + VECTOR_DIM * blockIdx.x];
+    B = B_input[tid + blockDim.x + VECTOR_DIM * blockIdx.x];
     sdata[tid] += A * B;
   }
 
