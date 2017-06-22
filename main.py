@@ -32,9 +32,10 @@ def parse_input(argv, config):
     except getopt.GetoptError:
         print "Input argument Invalid: "
         print "Valid inputs are Shown below"
-        print """main.py   -l <input language>
+        print """main.py
+          -l <input language>       Language to run morse segmentation on
           -b <batch size>           Number of words to segment from model( -1 for full dataset)
-          -p <partition size>       Number of words to group as a partition( -1 for one output file)
+          -p <partition size>       Number of words to group as a partition( -1 for no partition)
           -m <mode>                 segment type (<SUFFIX> or <PREFIX>)
           -t <model type>           SELECT mode (<fasttext> or <word2vec>)
           -o <output directory>     Output directory
@@ -43,10 +44,10 @@ def parse_input(argv, config):
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print """main.py    
+            print """main.py
             -l <input language>       Language to run morse segmentation on
             -b <batch size>           Number of words to segment from model( -1 for full dataset)
-            -p <partition size>       Number of words to group as a partition( -1 for one output file for each type)
+            -p <partition size>       Number of words to group as a partition( -1 for no partition)
             -m <mode>                 Segment type (<SUFFIX> or <PREFIX>)
             -t <model type>           Select mode (<fasttext> or <word2vec>)
             -o <output directory>     Output directory

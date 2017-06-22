@@ -94,7 +94,7 @@ def start_morse(model_file, config):
                 support_set.append(word)
             ss_sem[rule] = support_set
 
-            if counter % pickle_partition_size == 0:
+            if counter % pickle_partition_size == 0 and pickle_partition_size != -1:
                 print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"\
                                                + str(pickle_partition_size) + ")"
                 pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"))
