@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import numpy as np
 #sys.path.insert(0, '/home/johnlee/Research/morse/fasttext/fasttext') #DEBUGGING PURPOSE
 import fasttext
 from gensim.models.keyedvectors import KeyedVectors
 
 class WORDMODEL(object):
-
+    # __slots__ = ['model', 'words','type']
     def __init__(self, type, data, batch):
 
         self.type = type
+        self.batch = batch
         if type == "fasttext":
             print "loading fasttext model"
             self.model = fasttext.load_model(data)
@@ -25,38 +27,42 @@ class WORDMODEL(object):
                 binv = False
 
             print "loading word2vec model"
-            self.model = KeyedVectors.load_word2vec_format(data, binary=binv, unicode_errors='ignore')
+            self.model = KeyedVectors.load_word2vec_format(data, binary=binv,
+                                                           unicode_errors='ignore')
             print "Model Loaded"
 
-            self.words = []
-            full_word = []
-            if batch != -1 and batch < len(self.model.vocab):
-                for (k, obj) in self.model.vocab.iteritems():
-                    full_word.append((k, obj.count))
-
-                print "Sorting Start"
-
-                full_word = sorted(full_word, key=lambda x: x[1], reverse=True)
-
-                for i in range(batch):
-                    self.words.append((full_word[i])[0])
-
-                print "Sorting Done"
-
-            else:
-                for (k, _) in self.model.vocab.iteritems():
-                    self.words.append(k)
-            del full_word
 
         print "loading done"
 
-    def get_vector(self, word):
+    def get_vector(self, words):
         """get vector of the word"""
-        return self.model[unicode(word, "utf-8")]
+        dict = {}
+        print "Creating Vector dictionary"
+        for word in words:
+            dict[word] = np.array(self.model[word], dtype=np.float32)
+        return dict
 
     def get_words(self):
         """ get the list of words """
-        return self.words
+        words = []
+        final_words = []
+        if self.batch != -1 and self.batch < len(self.model.vocab):
+            for (k, obj) in self.model.vocab.iteritems():
+                words.append((k, obj.count))
+
+            print "Sorting Start"
+
+            # words = sorted(words, key=lambda x: x[1], reverse=True)
+
+            for i in range(self.batch):
+                final_words.append((words[i])[0])
+
+            print "Sorting Done"
+
+        else:
+            for (k, _) in self.model.vocab.iteritems():
+                words.append(k)
+        return final_words
 
 
 

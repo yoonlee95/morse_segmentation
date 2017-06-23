@@ -3,6 +3,7 @@
 
 import os
 import sys  
+import time
 
 import numpy as np
 import pickle
@@ -31,9 +32,14 @@ def start_morse(model_file, config):
 
     print "INIT WORD MODEL"
     wmodel = WORDMODEL(config['model_type'], model_file, config['batch_size'])
+    # with WORDMODEL(config['model_type'], model_file, config['batch_size']) as x:
     print "FINISHED LOADING MODEL"
 
     batch = wmodel.get_words()
+    vec = wmodel.get_vector(batch)
+
+    del wmodel
+
 
     r_orth = {}
     r_sem = {}
@@ -73,11 +79,9 @@ def start_morse(model_file, config):
             counter += 1
             pkl_saved = False
 
-            for word in words:
-                w_1.extend(wmodel.get_vector(word[0].encode('utf-8')))
-                w_2.extend(wmodel.get_vector(word[1].encode('utf-8')))
-            count, cos = get_distance_parallel(np.asarray(w_1, dtype=np.float32),
-                                               np.asarray(w_2, dtype=np.float32))
+            w_1 = np.concatenate([vec[word[0]] for word in words])
+            w_2 = np.concatenate([vec[word[1]] for word in words])
+            count, cos = get_distance_parallel(w_1, w_2)
 
             len_w = len(words)
             total = len_w * len_w
