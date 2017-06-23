@@ -4,9 +4,12 @@
     "batch_size" : 1000000,
     "partition_size" : 100000,
     "mode" : "SUFFIX",
-    "model_type" : "word2vec",
     "output_dir" : "./output_file",
 
     "base_word" : 3,
-    "edit_distance" : 6
+    "edit_distance" : 6,
+
+    "external_mode" : false,
+    "external_model_dir" : "",
+    "model_type" : "word2vec"
 }

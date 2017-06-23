@@ -28,19 +28,25 @@ def parse_input(argv, config):
 
     """
     try:
-        opts, _ = getopt.getopt(argv, "l:b:p:m:t:o:hw:e:")
+        opts, _ = getopt.getopt(argv, "l:b:p:m:t:o:hw:e:", ["em=", "ed=", "ext="])
     except getopt.GetoptError:
         print "Input argument Invalid: "
         print "Valid inputs are Shown below"
         print """main.py
-          -l <input language>       Language to run morse segmentation on
-          -b <batch size>           Number of words to segment from model( -1 for full dataset)
-          -p <partition size>       Number of words to group as a partition( -1 for no partition)
-          -m <mode>                 segment type (<SUFFIX> or <PREFIX>)
-          -t <model type>           SELECT mode (<fasttext> or <word2vec>)
-          -o <output directory>     Output directory
-          -w <base word>            minimum length of a word
-          -e <edit distance>        maximum edit distance a word can have beween another word in a SS""" 
+          -l <input language>        Language to run morse segmentation on
+          -b <batch size>            Number of words to segment from model( -1 for full dataset)
+          -p <partition size>        Number of words to group as a partition( -1 for no partition)
+          -m <mode>                  Segment type (<SUFFIX> or <PREFIX>)
+          -o <output directory>      Output directory
+          -w <base word>             Minimum length of a word
+          -e <edit distance>         Maximum edit distance a word can have beween another word in a SS 
+
+          -em  <external mode>       <True> or <False> value if external model is going to be used
+
+          External MODEL Mode Arguments( when <external mode> is used)
+
+          -ed  <external model dir>  Directory of the external model
+          -t <model type>            SELECT mode (<fasttext> or <word2vec>)"""
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
@@ -49,10 +55,16 @@ def parse_input(argv, config):
             -b <batch size>           Number of words to segment from model( -1 for full dataset)
             -p <partition size>       Number of words to group as a partition( -1 for no partition)
             -m <mode>                 Segment type (<SUFFIX> or <PREFIX>)
-            -t <model type>           Select mode (<fasttext> or <word2vec>)
             -o <output directory>     Output directory
             -w <base word>            Minimum length of a word
-            -e <edit distance>        Maximum edit distance a word can have beween another word in a SS""" 
+            -e <edit distance>        Maximum edit distance a word can have beween another word in a SS
+
+            --em  <external mode>       <True> or <False> value if external model is going to be used
+
+            External MODEL Mode Arguments( when <external mode> is used)
+
+            --ed  <external model dir>  Directory of the external model
+            -t <model type>             External model type (<fasttext> or <word2vec>)"""
             exit()
         elif opt in "-l":
             config['language'] = arg
@@ -79,6 +91,19 @@ def parse_input(argv, config):
             config['base_word'] = int(arg)
         elif opt in "-e":
             config['edit_distance'] = int(arg)
+        elif opt in "--em":
+            bol = arg.lower()
+            if bol == 'true':
+                config['external_mode'] = True
+            elif bol == 'false':
+                config['external_mode'] = False
+            else:
+                print "External Mode takes an argument of <True> or <False>"
+                sys.exit(2)
+
+        elif opt in "--ed":
+            config['external_model_dir'] = arg
+
 def download_model(config):
     """ Download Model from fasttext(facebook) repository
 
@@ -114,18 +139,30 @@ def download_model(config):
 def print_config(config):
     """print config parameter"""
 
-    print("INPUT PARAMETER:\n\
-    BASE WORD : {}\n\
-    BATCH SIZE : {}\n\
-    EDIT DISTANCE : {}\n\
-    LANGUAGE : {}\n\
-    MODE : {}\n\
-    MODEL TYPE : {}\n\
-    OUTPUT DIRECTORY : {}\n\
-    PARTITION SIZE : {}".format(config['base_word'], config['batch_size'],
-                                config['edit_distance'], config['language'], config['mode'],
-                                config['model_type'], config['output_dir'],
-                                config['partition_size']))
+    if config['external_mode'] == False:
+        print("INPUT PARAMETER:\n\
+        LANGUAGE : {}\n\
+        MODE : {}\n\n\
+        BASE WORD : {}\n\
+        EDIT DISTANCE : {}\n\n\
+        BATCH SIZE : {}\n\
+        PARTITION SIZE : {}\n\
+        OUTPUT DIRECTORY : {}".format(config['language'], config['mode'], config['base_word'],
+                                      config['edit_distance'], config['batch_size'],
+                                      config['partition_size'], config['output_dir']))
+    else:
+        print("INPUT PARAMETER:\n\
+        EXTERNAL MODEL DIR : {}\n\
+        MODEL TYPE : {}\n\
+        MODE : {}\n\n\
+        BASE WORD : {}\n\
+        EDIT DISTANCE : {}\n\n\
+        BATCH SIZE : {}\n\
+        PARTITION SIZE : {}\n\
+        OUTPUT DIRECTORY : {}".format(config['external_model_dir'], config['model_type'],
+                                      config['mode'], config['base_word'],
+                                      config['edit_distance'], config['batch_size'],
+                                      config['partition_size'], config['output_dir']))
 
 def main(argv):
     """Main code to lanch code for morse segmentation """
@@ -137,8 +174,12 @@ def main(argv):
     parse_input(argv, config)
     print_config(config)
 
+    if config['external_mode'] is False:
+        model_file = download_model(config)
+        config['model_type'] = 'word2vec'
+    else:
+        model_file = config['external_model_dir']
 
-    model_file = download_model(config)
 
     #Create output directory if it doesnt exit
     if not os.path.exists(config['output_dir']):

@@ -20,13 +20,17 @@ class WORDMODEL(object):
                 self.words = list(self.model.words)
         elif type == "word2vec":
 
+            binv = True
+            if ".vec" in data:
+                binv = False
+
             print "loading word2vec model"
-            self.model = KeyedVectors.load_word2vec_format(data, binary=False)
+            self.model = KeyedVectors.load_word2vec_format(data, binary=binv, unicode_errors='ignore')
             print "Model Loaded"
 
             self.words = []
             full_word = []
-            if batch != -1:
+            if batch != -1 and batch < len(self.model.vocab):
                 for (k, obj) in self.model.vocab.iteritems():
                     full_word.append((k, obj.count))
 
@@ -34,7 +38,6 @@ class WORDMODEL(object):
 
                 full_word = sorted(full_word, key=lambda x: x[1], reverse=True)
 
-                print full_word[0]
                 for i in range(batch):
                     self.words.append((full_word[i])[0])
 
