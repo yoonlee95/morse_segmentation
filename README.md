@@ -46,8 +46,10 @@ main.py
 `python main.py -l korean -b 1000000 -p -1 -m SUFFIX -t word2vec -o korean_1m -w 1 -e 3`
 ### Output
 
-* **ss_sem_[0-9]** - Contains Support sets
-* **w_sem_[0-9]**, **loc_sem_[0-9]**, **r_sem_[0-9]** and **r_orth_[0-9]** - Contains Scores calculated described in [1] in your `output directory`.
+**In total 10 types of files**
+
+* **[PRE + SUF]_ss_[0-9]** - Contains Support sets
+* **[PRE + SUF]_w_sem_[0-9]**, **[PRE + SUF]_loc_sem_[0-9]**, **[PRE + SUF]_r_sem_[0-9]** and **[PRE + SUF]_r_orth_[0-9]** - Contains Scores calculated described in [1] in your `output directory`.
 
 **Notes**
 * Currently only support word2vec mode ( python fasttext needs to be updated)
