@@ -48,8 +48,8 @@ main.py
 
 **In total 10 types of files**
 
-* **[PRE + SUF]_ss_[0-9]** - Contains Support sets
-* **[PRE + SUF]_w_sem_[0-9]**, **[PRE + SUF]_loc_sem_[0-9]**, **[PRE + SUF]_r_sem_[0-9]** and **[PRE + SUF]_r_orth_[0-9]** - Contains Scores calculated described in [1] in your `output directory`.
+* **[PRE + SUF]__ss_[0-9]** - Contains Support sets
+* **[PRE + SUF]__w_sem_[0-9]**, **[PRE + SUF]__loc_sem_[0-9]**, **[PRE + SUF]__r_sem_[0-9]** and **[PRE + SUF]__r_orth_[0-9]** - Contains Scores calculated described in [1] in your `output directory`.
 
 **Notes**
 * Currently only support word2vec mode ( python fasttext needs to be updated)
