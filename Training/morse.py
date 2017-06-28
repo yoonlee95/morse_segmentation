@@ -82,6 +82,12 @@ def start_morse(model_file, config):
             w_1 = np.concatenate([vec[word[0]] for word in words])
             w_2 = np.concatenate([vec[word[1]] for word in words])
             count, cos = get_distance_parallel(w_1, w_2)
+            # if len(words) > 20000:
+            #     words = words[:20000]
+            #     w_1 = np.concatenate([vec[word[0]] for word in words])
+            #     w_2 = np.concatenate([vec[word[1]] for word in words])
+
+            # count, cos = get_distance_parallel(w_1, w_2)
 
             len_w = len(words)
             total = len_w * len_w
@@ -104,7 +110,7 @@ def start_morse(model_file, config):
                 pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"))
-                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl"), "wb")
+                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl", "wb"))
                 pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"))
                 partition_index += 1
 
@@ -127,5 +133,5 @@ def start_morse(model_file, config):
 
 
 if __name__ == '__main__':
-    CONFIG = json.loads(open('./default-config').read())
-    start_morse('wiki.en.bin', CONFIG)
+    CONFIG = json.loads(open('./default-config.json').read())
+    start_morse('ssg.300.bin', CONFIG)

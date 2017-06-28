@@ -49,10 +49,9 @@ class WORDMODEL(object):
         if self.batch != -1 and self.batch < len(self.model.vocab):
             for (k, obj) in self.model.vocab.iteritems():
                 words.append((k, obj.count))
-
             print "Sorting Start"
 
-            # words = sorted(words, key=lambda x: x[1], reverse=True)
+            words = sorted(words, key=lambda x: x[1], reverse=True)
 
             for i in range(self.batch):
                 final_words.append((words[i])[0])
@@ -62,6 +61,7 @@ class WORDMODEL(object):
         else:
             for (k, _) in self.model.vocab.iteritems():
                 words.append(k)
+
         return final_words
 
 

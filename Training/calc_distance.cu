@@ -298,7 +298,7 @@ cos_distance(float *A, float *B_L2_NORM, int* Count, unsigned int num_entries)
 
 
 __global__ void 
-cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int num_entries)
+cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int offset, unsigned int num_entries)
 {
   __shared__ float W_2[300];
   __shared__ float W_1[300];
@@ -306,7 +306,7 @@ cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int num
   __shared__ float W_4_W_1[16][32];
 
 
-  int curr_entry = blockDim.y * blockIdx.x + threadIdx.y;
+  int curr_entry = blockDim.y * blockIdx.x + threadIdx.y + offset;
 
   float A_L2_NORM = B_L2_NORM[curr_entry];
   float W_4_LOCAL[10];

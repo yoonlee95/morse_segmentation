@@ -6,8 +6,8 @@
     "mode" : "SUFFIX",
     "output_dir" : "./output_file",
 
-    "base_word" : 3,
-    "edit_distance" : 6,
+    "base_word" : 1,
+    "edit_distance" : 4,
 
     "external_mode" : false,
     "external_model_dir" : "",
