@@ -30,19 +30,19 @@ def model_creator(scores_pre_path, scores_suf_path):
         hr = r_sem[rule]
         sss = r_orth[rule]
     	for instance in ss_sem[rule]:
-	    word1 = instance[0]
-	    word2 = instance[1]
-	    dis = loc_sem[instance]
-	    w_sem_val = w_sem[instance]
-	    rule_appended = ("suf", rule[0], rule[1])
-	    if word1 in output_dict:
-	        output_dict[word1].append((hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis))
-	    else:
-	        output_dict[word1] = [(hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis)]
-	    if word2 in output_dict:
-	        output_dict[word2].append((hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis))
-	    else:
-	        output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
+            word1 = instance[0]
+            word2 = instance[1]
+            dis = loc_sem[instance]
+            w_sem_val = w_sem[instance]
+            rule_appended = ("suf", rule[0], rule[1])
+            if word1 in output_dict:
+                output_dict[word1].append((hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis))
+            else:
+                output_dict[word1] = [(hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis)]
+            if word2 in output_dict:
+                output_dict[word2].append((hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis))
+            else:
+                output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
     
     path = scores_pre_path
 
@@ -68,19 +68,19 @@ def model_creator(scores_pre_path, scores_suf_path):
         hr = r_sem[rule]
         sss = r_orth[rule]
     	for instance in ss_sem[rule]:
-	    word1 = instance[0]
-	    word2 = instance[1]
-	    dis = loc_sem[instance]
-	    w_sem_val = w_sem[instance]
-	    rule_appended = ("pre", rule[0], rule[1])
-	    if word1 in output_dict:
-	        output_dict[word1].append((hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis))
-	    else:
-	        output_dict[word1] = [(hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis)]
-	    if word2 in output_dict:
-	        output_dict[word2].append((hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis))
-	    else:
-	        output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
+            word1 = instance[0]
+            word2 = instance[1]
+            dis = loc_sem[instance]
+            w_sem_val = w_sem[instance]
+            rule_appended = ("pre", rule[0], rule[1])
+            if word1 in output_dict:
+                output_dict[word1].append((hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis))
+            else:
+                output_dict[word1] = [(hr, sss, rule_appended, word2, rule_appended[1], w_sem_val, dis)]
+            if word2 in output_dict:
+                output_dict[word2].append((hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis))
+            else:
+                output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
 
     total = len(output_dict.keys())
     temp = 0
@@ -104,4 +104,4 @@ def model_creator(scores_pre_path, scores_suf_path):
 scores_pre_path = "scores_pre"
 scores_suf_path = "scores_suf"
 
-model = model_creator(scores_pre_path, scores_suf_path)
+model_creator(scores_pre_path, scores_suf_path)

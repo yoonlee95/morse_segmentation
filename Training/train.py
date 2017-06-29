@@ -6,10 +6,9 @@ import getopt
 import subprocess
 import json
 
-from pprint import pprint
-
 from language_to_iso639 import find_translation
 from morse import start_morse
+from Model_Creator import model_creator
 
 WEB_BASE = "https://s3-us-west-1.amazonaws.com/fasttext-vectors/wiki."
 VEC = ".vec"
@@ -28,43 +27,65 @@ def parse_input(argv, config):
 
     """
     try:
-        opts, _ = getopt.getopt(argv, "l:b:p:m:t:o:hw:e:", ["em=", "ed=", "ext="])
+        opts, _ = getopt.getopt(argv, "l:b:p:s:o:m:t:e:h", ["pw=", "pe=", "sw=", "se="])
     except getopt.GetoptError:
         print "Input argument Invalid: "
         print "Valid inputs are Shown below"
-        print """main.py
-          -l <input language>        Language to run morse segmentation on
-          -b <batch size>            Number of words to segment from model( -1 for full dataset)
-          -p <partition size>        Number of words to group as a partition( -1 for no partition)
-          -m <mode>                  Segment type (<SUFFIX> or <PREFIX>)
-          -o <output directory>      Output directory
-          -w <base word>             Minimum length of a word
-          -e <edit distance>         Maximum edit distance a word can have beween another word in a SS 
+        print """train.py
+          FASTTEXT MODEL mode(default mode):
+          -l <input language>       Language to run Morse Segmentation
 
-          -em  <external mode>       <True> or <False> value if external model is going to be used
+          External MODEL Mode(when <external mode> is used)
+          -e <external model dir>   Directory of the external model
+          -t <model type>           model to load the external model (<fasttext> or <word2vec>)
 
-          External MODEL Mode Arguments( when <external mode> is used)
+          General Configuations:
+          -b <batch size>           Number of words to segment from model( -1 for full dataset)
+          -p <partition size>       Number of words to group as a partition( -1 for no partition)
 
-          -ed  <external model dir>  Directory of the external model
-          -t <model type>            SELECT mode (<fasttext> or <word2vec>)"""
+          -m  <external mode>       <True> or <False> value if external model is going to be used
+
+          Output Directories:
+          -s <ss, score directory>  Output directory for the  support set and scores
+          -o <model output dir>     Output directory for the model
+
+          PREFIX Rules:
+          --pw <base word>           Minimum length of a word
+          --pe <edit distance>       Maximum edit distance a word can have beween another word in a SS 
+
+          SUFFIX Rules:
+          --sw <base word>           Minimum length of a word
+          --se <edit distance>       Maximum edit distance a word can have beween another word in a SS"""
+
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print """main.py
-            -l <input language>       Language to run morse segmentation on
+            print """train.py
+            FASTTEXT MODEL mode(default mode):
+            -l <input language>       Language to run Morse Segmentation
+
+            External MODEL Mode(when <external mode> is used)
+            -e <external model dir>   Directory of the external model
+            -t <model type>           model to load the external model (<fasttext> or <word2vec>)
+
+            General Configuations:
             -b <batch size>           Number of words to segment from model( -1 for full dataset)
             -p <partition size>       Number of words to group as a partition( -1 for no partition)
-            -m <mode>                 Segment type (<SUFFIX> or <PREFIX>)
-            -o <output directory>     Output directory
-            -w <base word>            Minimum length of a word
-            -e <edit distance>        Maximum edit distance a word can have beween another word in a SS
 
-            --em  <external mode>       <True> or <False> value if external model is going to be used
+            -m  <external mode>       <True> or <False> value if external model is going to be used
 
-            External MODEL Mode Arguments( when <external mode> is used)
+            Output Directories:
+            -s <ss, score directory>  Output directory for the  support set and scores
+            -o <model output dir>     Output directory for the model
 
-            --ed  <external model dir>  Directory of the external model
-            -t <model type>             External model type (<fasttext> or <word2vec>)"""
+            PREFIX Rules:
+            --pw <base word>           Minimum length of a word
+            --pe <edit distance>       Maximum edit distance a word can have beween another word in a SS 
+
+            SUFFIX Rules:
+            --sw <base word>           Minimum length of a word
+            --se <edit distance>       Maximum edit distance a word can have beween another word in a SS"""
+
             exit()
         elif opt in "-l":
             config['language'] = arg
@@ -72,26 +93,25 @@ def parse_input(argv, config):
             config['batch_size'] = int(arg)
         elif opt in "-p":
             config['partition_size'] = int(arg)
-        elif opt in "-m":
-            if arg in ["SUFFIX", "PREFIX"]:
-                config['mode'] = arg
-            else:
-                print "model type has to be <SUFFIX> or <PREFIX>"
-                sys.exit(2)
-
         elif opt in "-t":
             if arg in ["fasttext", "word2vec"]:
-                config['model_type'] = arg
+                config['external_model_type'] = arg
             else:
                 print "model type has to be <fasttext> or <word2vec>"
                 sys.exit(2)
         elif opt in "-o":
-            config['output_dir'] = arg
-        elif opt in "-w":
-            config['base_word'] = int(arg)
-        elif opt in "-e":
-            config['edit_distance'] = int(arg)
-        elif opt in "--em":
+            config['model_output_dir'] = arg
+        elif opt in "-s":
+            config['ss_score_output_dir'] = arg
+        elif opt in "--pw":
+            config['prefix_base_word'] = int(arg)
+        elif opt in "--pe":
+            config['prefix_edit_dist'] = int(arg)
+        elif opt in "--sw":
+            config['suffix_base_word'] = int(arg)
+        elif opt in "--se":
+            config['suffix_edit_dist'] = int(arg)
+        elif opt in "-m":
             bol = arg.lower()
             if bol == 'true':
                 config['external_mode'] = True
@@ -101,7 +121,7 @@ def parse_input(argv, config):
                 print "External Mode takes an argument of <True> or <False>"
                 sys.exit(2)
 
-        elif opt in "--ed":
+        elif opt in "-e":
             config['external_model_dir'] = arg
 
 def download_model(config):
@@ -139,28 +159,26 @@ def download_model(config):
 def print_config(config):
     """print config parameter"""
 
-    if config['external_mode'] == False:
+    if config['external_mode'] is False:
         print("INPUT PARAMETER:\n\
         LANGUAGE : {}\n\
-        MODE : {}\n\n\
         BASE WORD : {}\n\
         EDIT DISTANCE : {}\n\n\
         BATCH SIZE : {}\n\
         PARTITION SIZE : {}\n\
-        OUTPUT DIRECTORY : {}".format(config['language'], config['mode'], config['base_word'],
+        OUTPUT DIRECTORY : {}".format(config['language'], config['base_word'],
                                       config['edit_distance'], config['batch_size'],
                                       config['partition_size'], config['output_dir']))
     else:
         print("INPUT PARAMETER:\n\
         EXTERNAL MODEL DIR : {}\n\
         MODEL TYPE : {}\n\
-        MODE : {}\n\n\
         BASE WORD : {}\n\
         EDIT DISTANCE : {}\n\n\
         BATCH SIZE : {}\n\
         PARTITION SIZE : {}\n\
-        OUTPUT DIRECTORY : {}".format(config['external_model_dir'], config['model_type'],
-                                      config['mode'], config['base_word'],
+        OUTPUT DIRECTORY : {}".format(config['external_model_dir'], config['external_model_type'],
+                                      config['base_word'],
                                       config['edit_distance'], config['batch_size'],
                                       config['partition_size'], config['output_dir']))
 
@@ -176,7 +194,10 @@ def main(argv):
 
     if config['external_mode'] is False:
         model_file = download_model(config)
-        config['model_type'] = 'word2vec'
+
+        # Note: not really a extenal model type.
+        # word2vec is used for fasttext .vec file interperation
+        config['external_model_type'] = 'word2vec'
     else:
         model_file = config['external_model_dir']
 
@@ -185,7 +206,8 @@ def main(argv):
     if not os.path.exists(config['output_dir']):
         os.makedirs(config['output_dir'])
 
-    start_morse(model_file, config)
+    suffix_index = start_morse(model_file, config, "SUFFIX")
+    prefix_index = start_morse(model_file, config, "PREFIX")
 
 if __name__ == "__main__":
     main(sys.argv[1:])

@@ -3,13 +3,17 @@
 
     "batch_size" : 1000000,
     "partition_size" : 100000,
-    "mode" : "SUFFIX",
-    "output_dir" : "./output_file",
 
-    "base_word" : 1,
-    "edit_distance" : 4,
+    "ss_score_output_dir" : "./ss_score_output",
+    "model_output_dir" : "./model_output",
+
+    "prefix_base_word" : 1,
+    "prefix_edit_dist" : 4,
+
+    "suffix_base_word" : 1,
+    "suffix_edit_dist" : 3,
 
     "external_mode" : false,
     "external_model_dir" : "",
-    "model_type" : "word2vec"
+    "external_model_type" : "word2vec"
 }
