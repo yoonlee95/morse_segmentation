@@ -63,7 +63,7 @@ train.py
 
 #### Output
 
-* **Output Model** in model output dir
+* **Output Model** in `model output directory`
 
 * **10 types of files** in `ss score directory`.
 
