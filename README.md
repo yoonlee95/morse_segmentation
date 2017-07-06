@@ -63,12 +63,14 @@ train.py
 
 #### Output
 
-**In total 10 types of files**
+**Output Model** in model output dir
+
+**In total 10 types of files** in `ss score directory`.
 
 * **[PRE + SUF]__ss_[0-9]** - Contains Support sets
-* **[PRE + SUF]__w_sem_[0-9]**, **[PRE + SUF]__loc_sem_[0-9]**, **[PRE + SUF]__r_sem_[0-9]** and **[PRE + SUF]__r_orth_[0-9]** - Contains Scores calculated described in [1] in your `ss score directory`.
+* **[PRE + SUF]__w_sem_[0-9]**, **[PRE + SUF]__loc_sem_[0-9]**, **[PRE + SUF]__r_sem_[0-9]** and **[PRE + SUF]__r_orth_[0-9]** - Contains Scores calculated described in [1] 
 
-* **Model** in model output dir
+
 
 **Notes**
 * Currently only support word2vec mode ( python fasttext needs to be updated)
