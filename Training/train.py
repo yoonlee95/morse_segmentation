@@ -162,25 +162,35 @@ def print_config(config):
     if config['external_mode'] is False:
         print("INPUT PARAMETER:\n\
         LANGUAGE : {}\n\
-        BASE WORD : {}\n\
-        EDIT DISTANCE : {}\n\n\
+        PREFIX BASE WORD : {}\n\
+        PREFIX EDIT DISTANCE : {}\n\n\
+        SUFFIX BASE WORD : {}\n\
+        SUFFIX EDIT DISTANCE : {}\n\n\
         BATCH SIZE : {}\n\
         PARTITION SIZE : {}\n\
-        OUTPUT DIRECTORY : {}".format(config['language'], config['base_word'],
-                                      config['edit_distance'], config['batch_size'],
-                                      config['partition_size'], config['output_dir']))
+        SS SCORE DIRECTORY : {}\n\
+        MODEL DIRECTORY : {}".format(config['language'], config['prefix_base_word'],
+                                     config['prefix_edit_dist'], config['suffix_base_word'],
+                                     config['suffix_edit_dist'], config['batch_size'],
+                                     config['partition_size'], config['ss_score_output_dir'],
+                                     config['model_output_dir']))
     else:
         print("INPUT PARAMETER:\n\
         EXTERNAL MODEL DIR : {}\n\
         MODEL TYPE : {}\n\
-        BASE WORD : {}\n\
-        EDIT DISTANCE : {}\n\n\
+        PREFIX BASE WORD : {}\n\
+        PREFIX EDIT DISTANCE : {}\n\n\
+        SUFFIX BASE WORD : {}\n\
+        SUFFIX EDIT DISTANCE : {}\n\n\
         BATCH SIZE : {}\n\
         PARTITION SIZE : {}\n\
-        OUTPUT DIRECTORY : {}".format(config['external_model_dir'], config['external_model_type'],
-                                      config['base_word'],
-                                      config['edit_distance'], config['batch_size'],
-                                      config['partition_size'], config['output_dir']))
+        SS SCORE DIRECTORY : {}\n\
+        MODEL DIRECTORY : {}".format(config['external_model_dir'], config['external_model_type'],
+                                     config['prefix_base_word'], config['prefix_edit_dist'],
+                                     config['suffix_base_word'],
+                                     config['suffix_edit_distance'], config['batch_size'],
+                                     config['partition_size'], config['ss_score_output_dir'],
+                                     config['model_output_dir']))
 
 def main(argv):
     """Main code to lanch code for morse segmentation """
@@ -203,11 +213,15 @@ def main(argv):
 
 
     #Create output directory if it doesnt exit
-    if not os.path.exists(config['output_dir']):
-        os.makedirs(config['output_dir'])
+    if not os.path.exists(config['ss_score_output_dir']):
+        os.makedirs(config['ss_score_output_dir'])
+    if not os.path.exists(config['model_output_dir']):
+        os.makedirs(config['model_output_dir'])
 
     suffix_index = start_morse(model_file, config, "SUFFIX")
     prefix_index = start_morse(model_file, config, "PREFIX")
+
+    model_creator(config['ss_score_output_dir'], config['model_output_dir'], prefix_index, suffix_index)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

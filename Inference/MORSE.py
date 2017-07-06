@@ -20,7 +20,7 @@ def find_str(s, char):
 
 def generate_all_ss(shorter):
         all_ss = []
-        for head in range(len(shorter)-1):
+        for head in range(len(shorter)):
                 for tail in range(head+1, len(shorter)+1):
                         sc = shorter[head:tail]
                         all_ss.append((sc, len(sc), head, tail))
@@ -81,6 +81,7 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
                         for tup in lrules:
                                 if tup[1] > sss_cutoff and tup[0]>hr_cutoff and (tup[2][1] == "" or tup[2][2] == "" or all_rules) and tup[5] > cs_cutoff and tup[5]!=-1 and tup[6] > pw_cutoff:
                                         if len(tup[3]) < len(word):
+						print word, tup
 
                                                 affix = tup[4]
 
@@ -103,6 +104,7 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
                                                         	word = word[:-len(affix)]
 							else:
 								ht = find_lcs(tup[3], init_word)
+								print ht
 								if ht != -1:
 									(curr_head, curr_tail) = ht
 									if curr_tail < tail :
@@ -137,15 +139,16 @@ def segment_word_full(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff
 
 	return predicted_morphs
 
-model = pickle.load(open("model.pkl"))
+# model = pickle.load(open("../Training/korean_model/model.pkl"))
+model = pickle.load(open(sys.argv[1]))
 sss_cutoff = 45
 hr_cutoff = 0.1
 cs_cutoff = 0.1
 pw_cutoff = -100
 all_rules = True
 with_replacement = True
-infile = open(sys.argv[1])
-outfile = open(sys.argv[2], "w")
+infile = open(sys.argv[2])
+outfile = open(sys.argv[3], "w")
 for line in infile:
 	word = line.strip()
 	morphs = segment_word_full(word, model, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement)
@@ -154,3 +157,7 @@ for line in infile:
 		outfile.write(morph.encode("utf-8") + " ")
 	outfile.write("\n")
 outfile.close()
+
+# print find_lcs("play", "player")
+# print find_lcs("fly", "flies")
+# print find_lcs("c", "cak")

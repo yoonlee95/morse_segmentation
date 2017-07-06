@@ -1,14 +1,14 @@
 {
     "language" : "english",
 
-    "batch_size" : 1000000,
+    "batch_size" : 100000,
     "partition_size" : 100000,
 
     "ss_score_output_dir" : "./ss_score_output",
-    "model_output_dir" : "./model_output",
+    "model_output_dir" : "./english_output",
 
     "prefix_base_word" : 1,
-    "prefix_edit_dist" : 4,
+    "prefix_edit_dist" : 3,
 
     "suffix_base_word" : 1,
     "suffix_edit_dist" : 3,

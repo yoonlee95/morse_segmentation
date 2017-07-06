@@ -6,7 +6,6 @@ import scipy
 from pycuda.compiler import SourceModule
 
 
-CALC_PARTITION = 5000
 
 mod = SourceModule(open("calc_distance.cu").read())
 vecAdd = mod.get_function("vectorAdd")
@@ -21,6 +20,18 @@ def get_distance_parallel(w_1, w_2):
         size_of_array =  w_1.size
         number_of_element = w_1.size /300 
 
+        if number_of_element > 40000:
+                CALC_PARTITION = 1600
+        elif number_of_element > 40000:
+                CALC_PARTITION = 4800
+        elif number_of_element > 40000:
+                CALC_PARTITION = 6400
+        elif number_of_element > 30000:
+                CALC_PARTITION = 8400
+        elif number_of_element > 20000:
+                CALC_PARTITION = 14400
+        else:
+                CALC_PARTITION = number_of_element
 
         #Allocate memory
         C = np.empty(number_of_element).astype(np.float32)
@@ -49,10 +60,13 @@ def get_distance_parallel(w_1, w_2):
         cuda.memcpy_dtoh(C, C_gpu)
 
         curr_number = 0
+        remander =  number_of_element - curr_number
+
+        Count_gpu = cuda.mem_alloc(CALC_PARTITION * 4)
+        blocksPerGrid =int((CALC_PARTITION + 16.0 - 1) / 16);
+
         if curr_number+ CALC_PARTITION < number_of_element:
 
-                Count_gpu = cuda.mem_alloc(CALC_PARTITION * 4)
-                blocksPerGrid =int((CALC_PARTITION + 16.0 - 1) / 16);
 
                 while( curr_number+ CALC_PARTITION < number_of_element ):
 
@@ -70,7 +84,6 @@ def get_distance_parallel(w_1, w_2):
             blocksPerGrid =int(( (remander)  + 16.0 - 1) / 16);
 
             Cos_dist(A_gpu,B_gpu, C_gpu, Count_gpu, np.int32(curr_number), np.int32(number_of_element), block=(32,16,1), grid=(blocksPerGrid,1))
-
             cuda.memcpy_dtoh(Count[curr_number:], Count_gpu)
 
         A_gpu.free()
@@ -99,7 +112,7 @@ def check_distance(w1,w2,w3,w4):
 
 if __name__ == "__main__":
 
-        size = 40301
+        size = 19
         w_1 = np.random.rand(300 * size).astype(np.float32)-.5
         w_2 = np.random.rand(300 * size).astype(np.float32) -.5
 
@@ -110,7 +123,9 @@ if __name__ == "__main__":
                 cos_2.append(np.dot(w_1_norm, w_2_norm))
 
         x, cos = get_distance_parallel(w_1, w_2)
+        print x
 
         for i in range(size):
                 if abs(cos[i] - cos_2[i]) > .00001:
                         print cos[i], cos_2[i]
+        print "NOTHING WRONG"

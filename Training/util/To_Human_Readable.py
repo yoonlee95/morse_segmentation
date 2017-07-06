@@ -18,12 +18,12 @@ rule_file = open('human_readable/rule_H.txt', 'w')
 cos_file = open('human_readable/cos_H.txt', 'w')
 
 
-for i in range(0,1):
+for i in range(0,5):
 
-    ss_sem = open(DIR + '/ss_sem_'+str(i)+'.pkl', 'rb')
-    r_sem = open(DIR + '/r_sem_'+str(i)+'.pkl', 'rb')
-    r_orth = open(DIR + '/r_orth_'+str(i)+'.pkl', 'rb')
-    w_sem = open(DIR + '/w_sem_'+str(i)+'.pkl', 'rb')
+    ss_sem = open(DIR + '/SUF_ss_'+str(i)+'.pkl', 'rb')
+    r_sem = open(DIR + '/SUF_r_sem_'+str(i)+'.pkl', 'rb')
+    r_orth = open(DIR + '/SUF_r_orth_'+str(i)+'.pkl', 'rb')
+    w_sem = open(DIR + '/SUF_w_sem_'+str(i)+'.pkl', 'rb')
     mydict1 = pickle.load(ss_sem)
     mydict2 = pickle.load(r_sem)
     mydict3 = pickle.load(r_orth)

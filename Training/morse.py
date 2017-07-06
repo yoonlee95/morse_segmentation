@@ -50,15 +50,20 @@ def start_morse(model_file, config, mode):
     r_sem = {}
     w_sem = {}
     loc_sem = {}
-    ss_sem = {}
+    ss = {}
+    file_start_string = ""
 
     #CREATE SUPPORT SET
     if mode == "SUFFIX":
         print "SUFFIX TREE BUILD"
+        file_start_string = "/SUF"
+
         support_set = morse_structure.getsegmentation(batch, config['suffix_base_word'],
                                                       config['suffix_edit_dist'])
     elif mode == "PREFIX":
         print "PREFIX TREE BUILD"
+        file_start_string = "/PRE"
+
         for index, _ in enumerate(batch):
             if len(batch[index]) > 0:
                 batch[index] = batch[index][::-1]
@@ -68,7 +73,6 @@ def start_morse(model_file, config, mode):
         print "WRONG MODE"
         print "NEEDS TO BE <SUFFIX> or <PREFIX>"
         exit()
-        
 
     print "Number of Support Set: " + str(len(support_set))
     del batch
@@ -85,7 +89,7 @@ def start_morse(model_file, config, mode):
     for rule, words in support_set.iteritems():
         w_1 = []
         w_2 = []
-        if len(words) > 1:
+        if len(words) > 5:
             counter += 1
             pkl_saved = False
 
@@ -106,21 +110,25 @@ def start_morse(model_file, config, mode):
             support_set = []
             for word in words:
                 support_set.append(word)
-            ss_sem[rule] = support_set
+            ss[rule] = support_set
 
             if counter % pickle_partition_size == 0 and pickle_partition_size != -1:
                 print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"\
                                                + str(pickle_partition_size) + ")"
-                pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"),
+                pickle.dump(r_orth, open(output_dict+file_start_string+"_r_orth_"+
+                                         str(partition_index)+".pkl", "wb"),
                             protocol=2)
-                pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"),
+                pickle.dump(r_sem, open(output_dict+file_start_string+"_r_sem_"+
+                                        str(partition_index)+".pkl", "wb"),
                             protocol=2)
-                pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"),
+                pickle.dump(w_sem, open(output_dict+file_start_string+"_w_sem_"+
+                                        str(partition_index)+".pkl", "wb"),
                             protocol=2)
-                pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl",
-                                          "wb"),
+                pickle.dump(loc_sem, open(output_dict+file_start_string+"_loc_sem_"+
+                                          str(partition_index)+".pkl", "wb"),
                             protocol=2)
-                pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"),
+                pickle.dump(ss, open(output_dict+file_start_string+"_ss_"+
+                                     str(partition_index)+".pkl", "wb"),
                             protocol=2)
                 partition_index += 1
 
@@ -128,25 +136,37 @@ def start_morse(model_file, config, mode):
                 r_sem = {}
                 w_sem = {}
                 loc_sem = {}
-                ss_sem = {}
+                ss = {}
                 pkl_saved = True
 
     if pkl_saved is not True:
         print "PARTITION : "+ str(partition_index) + " COMPLETE (SIZE:"\
                                  + str(pickle_partition_size) + ") FINAL"
-        pickle.dump(r_orth, open(output_dict+"/r_orth_"+str(partition_index)+".pkl", "wb"),
+        pickle.dump(r_orth, open(output_dict+file_start_string+"_r_orth_"+
+                                 str(partition_index)+".pkl", "wb"),
                     protocol=2)
-        pickle.dump(r_sem, open(output_dict+"/r_sem_"+str(partition_index)+".pkl", "wb"),
+        pickle.dump(r_sem, open(output_dict+file_start_string+"_r_sem_"+
+                                str(partition_index)+".pkl", "wb"),
                     protocol=2)
-        pickle.dump(w_sem, open(output_dict+"/w_sem_"+str(partition_index)+".pkl", "wb"),
+        pickle.dump(w_sem, open(output_dict+file_start_string+"_w_sem_"+
+                                str(partition_index)+".pkl", "wb"),
                     protocol=2)
-        pickle.dump(loc_sem, open(output_dict+"/loc_sem_"+str(partition_index)+".pkl", "wb"),
+        pickle.dump(loc_sem, open(output_dict+file_start_string+"_loc_sem_"+
+                                  str(partition_index)+".pkl", "wb"),
                     protocol=2)
-        pickle.dump(ss_sem, open(output_dict+"/ss_sem_"+str(partition_index)+".pkl", "wb"),
+        pickle.dump(ss, open(output_dict+file_start_string+"_ss_"+
+                             str(partition_index)+".pkl", "wb"),
                     protocol=2)
 
     del vec
     del support_set
+
+    del r_orth
+    del r_sem
+    del w_sem
+    del loc_sem
+    del ss
+
     return partition_index
 
 

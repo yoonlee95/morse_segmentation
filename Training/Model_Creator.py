@@ -3,29 +3,35 @@
 import cPickle as pickle
 import sys
 
-def model_creator(scores_pre_path, scores_suf_path):
+def model_creator(ss_sem_path, output_path, prefix_index, suffix_index):
     output_dict = {}
+    print "CREATING MODEL"
 
-    path = scores_suf_path
+    print "LOADING SUFFIX DATA"
+    try:
+        ss_sem = pickle.load(open(ss_sem_path + "/SUF_ss_0.pkl"))
+        loc_sem = pickle.load(open(ss_sem_path + "/SUF_loc_sem_0.pkl"))
+        r_sem = pickle.load(open(ss_sem_path + "/SUF_r_sem_0.pkl"))
+        r_orth = pickle.load(open(ss_sem_path + "/SUF_r_orth_0.pkl"))
+        w_sem = pickle.load(open(ss_sem_path + "/SUF_w_sem_0.pkl"))
+    except:
+        print "ss_score files cant be found"
+        exit()
 
-    print "let the games begin"
-    loc_sem = pickle.load(open(path + "/loc_sem.pkl"))
-    print "loc_sem loaded"
-    r_sem = pickle.load(open(path + "/r_sem.pkl"))
-    print "r_sem loaded"
-    r_orth = pickle.load(open(path + "/r_orth.pkl"))
-    print "r_orth loaded"
-    w_sem = pickle.load(open(path + "/w_sem.pkl"))
-    print "w_sem loaded"
-    ss_sem = pickle.load(open(path + "/ss_sem.pkl"))
-    print "ss_sem loaded"
+    if suffix_index -1 > 0:
+        for index in range(1, suffix_index):
+            ss_sem.update(pickle.load(open(ss_sem_path + "/SUF_ss_"+str(index)+".pkl")))
+            loc_sem.update(pickle.load(open(ss_sem_path + "/SUF_loc_sem_"+str(index)+".pkl")))
+            r_sem.update(pickle.load(open(ss_sem_path + "/SUF_r_sem_"+str(index)+".pkl")))
+            r_orth.update(pickle.load(open(ss_sem_path + "/SUF_r_orth_"+str(index)+".pkl")))
+            w_sem.update(pickle.load(open(ss_sem_path + "/SUF_w_sem_"+str(index)+".pkl")))
 
+    print "CREATING SUFFIX MODEL"
 
     total = len(ss_sem.keys())
     temp = 0
     for counter, rule in enumerate(ss_sem.keys()):
         if ((counter - temp) > 0.01*total):
-            print float(counter)/total
             temp = counter
         hr = r_sem[rule]
         sss = r_orth[rule]
@@ -44,26 +50,37 @@ def model_creator(scores_pre_path, scores_suf_path):
             else:
                 output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
     
-    path = scores_pre_path
+    del ss_sem
+    del loc_sem
+    del r_sem
+    del r_orth
+    del w_sem
+    print "LOADING PREFIX DATA"
+    try:
+        ss_sem = pickle.load(open(ss_sem_path + "/PRE_ss_0.pkl"))
+        loc_sem = pickle.load(open(ss_sem_path + "/PRE_loc_sem_0.pkl"))
+        r_sem = pickle.load(open(ss_sem_path + "/PRE_r_sem_0.pkl"))
+        r_orth = pickle.load(open(ss_sem_path + "/PRE_r_orth_0.pkl"))
+        w_sem = pickle.load(open(ss_sem_path + "/PRE_w_sem_0.pkl"))
+    except:
+        print "ss_score files cant be found"
+        exit()
 
-    print "let the games begin"
-    loc_sem = pickle.load(open(path + "/loc_sem.pkl"))
-    print "loc_sem loaded"
-    r_sem = pickle.load(open(path + "/r_sem.pkl"))
-    print "r_sem loaded"
-    r_orth = pickle.load(open(path + "/r_orth.pkl"))
-    print "r_orth loaded"
-    w_sem = pickle.load(open(path + "/w_sem.pkl"))
-    print "w_sem loaded"
-    ss_sem = pickle.load(open(path + "/ss_sem.pkl"))
-    print "ss_sem loaded"
+    if suffix_index -1 > 0:
+        for index in range(1, prefix_index):
+            ss_sem.update(pickle.load(open(ss_sem_path + "/PRE_ss_"+str(index)+".pkl")))
+            loc_sem.update(pickle.load(open(ss_sem_path + "/PRE_loc_sem_"+str(index)+".pkl")))
+            r_sem.update(pickle.load(open(ss_sem_path + "/PRE_r_sem_"+str(index)+".pkl")))
+            r_orth.update(pickle.load(open(ss_sem_path + "/PRE_r_orth_"+str(index)+".pkl")))
+            w_sem.update(pickle.load(open(ss_sem_path + "/PRE_w_sem_"+str(index)+".pkl")))
+
+    print "CREATING PREFIX MODEL"
 
 
     total = len(ss_sem.keys())
     temp = 0
     for counter, rule in enumerate(ss_sem.keys()):
         if ((counter - temp) > 0.01*total):
-            print float(counter)/total
             temp = counter
         hr = r_sem[rule]
         sss = r_orth[rule]
@@ -82,12 +99,19 @@ def model_creator(scores_pre_path, scores_suf_path):
             else:
                 output_dict[word2] = [(hr, sss, rule_appended, word1, rule_appended[2], w_sem_val, dis)]
 
+    del ss_sem
+    del loc_sem
+    del r_sem
+    del r_orth
+    del w_sem
+
     total = len(output_dict.keys())
     temp = 0
+    print "FINAL STAGE OF MODEL BUILDING"
+
     output_dict_v2 = {}
     for counter, word in enumerate(output_dict.keys()):
         if ((counter - temp) > 0.01*total):
-            print float(counter)/total
             temp = counter
         temp_list = []
         sorted_list = sorted(output_dict[word], key=lambda x: x[0] + x[1] + x[5] + x[6], reverse = True)
@@ -98,10 +122,12 @@ def model_creator(scores_pre_path, scores_suf_path):
             if tup[2][1]!="" and tup[2][2]!="":
                 temp_list.append(tup)
         output_dict_v2[word] = temp_list
-    pickle.dump(output_dict_v2, open("model.pkl", "w"), protocol = 2)
+    del output_dict
+    print "Saving MODEL"
+    pickle.dump(output_dict_v2, open(output_path+"/model.pkl", "wb"), protocol=2)
 
 
-scores_pre_path = "scores_pre"
-scores_suf_path = "scores_suf"
 
-model_creator(scores_pre_path, scores_suf_path)
+
+if __name__ == "__main__":
+    model_creator("./ss_score_output", "./model_output",  13, 4)
