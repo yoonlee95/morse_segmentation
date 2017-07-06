@@ -78,6 +78,8 @@ train.py
 * Pre-Trained language are downloaded from https://github.com/facebookresearch/fastText/blob/master/pretrained-vectors.md 
 * With 16GB of RAM you should be able run a batch size of 1M (Can vary with base word and edit distance).
 
+----
+
 ### Inference
 
 run `python MORSE.py` with the arguments [**model_dir**,**input.txt**,**output.txt**]
