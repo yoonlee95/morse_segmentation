@@ -63,12 +63,12 @@ train.py
 
 #### Output
 
-**Output Model** in model output dir
+* **Output Model** in model output dir
 
-**In total 10 types of files** in `ss score directory`.
+* **10 types of files** in `ss score directory`.
 
-* **[PRE + SUF]__ss_[0-9]** - Contains Support sets
-* **[PRE + SUF]__w_sem_[0-9]**, **[PRE + SUF]__loc_sem_[0-9]**, **[PRE + SUF]__r_sem_[0-9]** and **[PRE + SUF]__r_orth_[0-9]** - Contains Scores calculated described in [1] 
+    * **[PRE + SUF]__ss_[0-9]** - Contains Support sets
+    * **[PRE + SUF]__w_sem_[0-9]**, **[PRE + SUF]__loc_sem_[0-9]**, **[PRE + SUF]__r_sem_[0-9]** and **[PRE + SUF]__r_orth_[0-9]** - Contains Scores calculated described in [1] 
 
 
 
