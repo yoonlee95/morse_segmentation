@@ -59,7 +59,7 @@ train.py
 ```
 #### example
 
-`python main.py -l korean -b 1000000 -p -1 -m SUFFIX -t word2vec -o korean_1m -w 1 -e 3`
+`python train.py -l korean -b 500000 -s korean_500k_p_1_2_s_1_3 -o korean_model --pw 1 --pe 2 --sw 1 --se 3`
 
 #### Output
 
