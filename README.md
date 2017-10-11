@@ -8,8 +8,8 @@ Multi-language full pipeline of MORpheme Segementor based on [1]
 
 Linux enviorment with
 
-1. NVIDIA GPU
-2. Recommended 32GB or more RAM
+1. CUDA enabled GPU
+2. Recommended 32GB or more of RAM
 
 **Dependencies**
 
@@ -20,8 +20,8 @@ Linux enviorment with
     1. [numpy](http://www.numpy.org/)
     2. [gensim](https://radimrehurek.com/gensim/)
     3. [pycuda](https://documen.tician.de/pycuda/)
-    
-    Can be installed with pip `sudo pip install --upgrade numpy gensim pycuda`
+
+    Run `suda pip install -r requrements.txt`    
 
 ## How to use
 
