@@ -388,7 +388,7 @@ cos_distance2(float *A, float* B, float *B_L2_NORM, int* Count, unsigned int off
 
       if (threadIdx.x == 0 and curr_entry < num_entries){
         // printf("curr_entry %d, %f\n", curr_entry,W_4_W_2[threadIdx.y][0] * A_L2_NORM / (W_4_W_2[threadIdx.y][0]) );
-        if( W_4_W_2[threadIdx.y][0] * A_L2_NORM / (W_4_W_1[threadIdx.y][0]) > .50){
+        if( W_4_W_2[threadIdx.y][0] * A_L2_NORM / (W_4_W_1[threadIdx.y][0]) > .85){
           Local_Count += 1;
         }
       }

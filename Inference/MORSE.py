@@ -1,5 +1,8 @@
 # coding: utf-8
 
+
+global total_misses
+
 import cPickle as pickle
 import sys
 import random
@@ -56,7 +59,7 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
         prefixes = []
         suffixes = []
 
-	word = word.decode("utf-8")
+	# word = word.decode("utf-8")
 
 	init_word = word
 
@@ -67,6 +70,8 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
 
 	pre_bounds = []
 	suff_bounds = []
+	x = word in words_to_rule_dict
+	# print word + " : " + str(x)
 
         while(True):
 
@@ -74,15 +79,14 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
                         break
 
                 temp_word = word
-
                 if word in words_to_rule_dict:
+			print "cmae to not miss"
 			lrules = words_to_rule_dict[word]
-			#random.shuffle(lrules)
+			# print lrules
                         for tup in lrules:
                                 if tup[1] > sss_cutoff and tup[0]>hr_cutoff and (tup[2][1] == "" or tup[2][2] == "" or all_rules) and tup[5] > cs_cutoff and tup[5]!=-1 and tup[6] > pw_cutoff:
-                                        if len(tup[3]) < len(word):
-						print word, tup
 
+                                        if len(tup[3]) < len(word):
                                                 affix = tup[4]
 
                                                 if tup[2][0] == "pre":
@@ -104,7 +108,6 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
                                                         	word = word[:-len(affix)]
 							else:
 								ht = find_lcs(tup[3], init_word)
-								print ht
 								if ht != -1:
 									(curr_head, curr_tail) = ht
 									if curr_tail < tail :
@@ -114,11 +117,17 @@ def segment_word(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_
 								word = tup[3]
 
                                                 break
+                else:
+			print "came to miss"
+			total_misses +=1 
+
+
 
 	if not(with_replacement):
         	return prefixes + [word] + suffixes
 	else:
 		#return get_full_bounds(init_word, pre_bounds, suff_bounds)
+		# print "return value : ", prefixes + [word] + suffixes
         	return prefixes + [word] + suffixes
 
 def segment_word_full(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement):
@@ -131,6 +140,7 @@ def segment_word_full(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff
 		gen_part = ["'" + gen_splits[1]]
 
 	compounds = word.split("-")
+
 	for comp in compounds:
 		predicted_morphs += segment_word(comp, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement) + ["-"]
 	if predicted_morphs[-1] == "-":
@@ -139,25 +149,50 @@ def segment_word_full(word, words_to_rule_dict, sss_cutoff, hr_cutoff, cs_cutoff
 
 	return predicted_morphs
 
-# model = pickle.load(open("../Training/korean_model/model.pkl"))
-model = pickle.load(open(sys.argv[1]))
-sss_cutoff = 45
-hr_cutoff = 0.1
-cs_cutoff = 0.1
-pw_cutoff = -100
-all_rules = True
-with_replacement = True
-infile = open(sys.argv[2])
-outfile = open(sys.argv[3], "w")
-for line in infile:
-	word = line.strip()
-	morphs = segment_word_full(word, model, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement)
-	#outfile.write(" ".join(morphs) + "\n")
-	for morph in morphs:
-		outfile.write(morph.encode("utf-8") + " ")
-	outfile.write("\n")
-outfile.close()
+if __name__ == "__main__":
+	model = pickle.load(open(sys.argv[1]))
+	infile = open(sys.argv[2])
+	outfile = open(sys.argv[3], "w")
 
-# print find_lcs("play", "player")
-# print find_lcs("fly", "flies")
-# print find_lcs("c", "cak")
+	sss_cutoff = 25 
+	hr_cutoff = 0.8
+	cs_cutoff = 0.25
+	pw_cutoff = .05 
+	all_rules = True
+	with_replacement = True
+
+	total_misses = 0
+	# infile =[u"향약", u"향약이"]
+	print "DONE LOADING"
+	for line in infile:
+		word = line.strip()
+		word = word.decode("utf-8")
+		morphs = segment_word_full(word, model, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement)
+		#outfile.write(" ".join(morphs) + "\n")
+		for morph in morphs:
+			outfile.write(morph.encode("utf-8") + " ")
+		outfile.write("\n")
+	print total_misses
+	outfile.close()
+# def load_data:
+# 	model = pickle.load(open(sys.argv[1]))
+# 	infile = open(sys.argv[2])
+# 	outfile = open(sys.argv[3], "w")
+
+# 	sss_cutoff = 25 
+# 	hr_cutoff = 0.8
+# 	cs_cutoff = 0.25
+# 	pw_cutoff = .05 
+# 	all_rules = True
+# 	with_replacement = True
+
+# 	infile =[u"향약", u"향약이"]
+# 	for line in infile:
+# 		word = line.strip()
+# 		word = word.decode("utf-8")
+# 		morphs = segment_word_full(word, model, sss_cutoff, hr_cutoff, cs_cutoff, pw_cutoff, all_rules, with_replacement)
+# 		#outfile.write(" ".join(morphs) + "\n")
+# 		for morph in morphs:
+# 			outfile.write(morph.encode("utf-8") + " ")
+# 		outfile.write("\n")
+# 	outfile.close()
